@@ -6,6 +6,7 @@ Interactive maps and figures by Jonas Dovern. This repository holds multiple ind
 
 - Gallery: https://jonasdovern.github.io/visualizations/
 - Election map: https://jonasdovern.github.io/visualizations/bundestagswahl-2025/
+- Decision trees: https://jonasdovern.github.io/visualizations/decision-trees/
 
 GitHub Pages publishes from **main → /docs**. Commits to `main` update the website automatically after the Pages deployment completes. No npm installation, framework, custom workflow, or compilation is needed.
 
@@ -21,6 +22,9 @@ GitHub Pages publishes from **main → /docs**. Commits to `main` update the web
 | `docs/bundestagswahl-2025/sources.html` | Sources, methodology and attribution |
 | `docs/bundestagswahl-2025/constituencies.csv` | Derived constituency data |
 | `docs/bundestagswahl-2025/audit.json` | Provenance, hashes and reconciliation totals |
+| `docs/decision-trees/index.html` | Standalone multilingual decision-tree introduction |
+| `docs/decision-trees/preview.jpg` | Gallery thumbnail |
+| `docs/decision-trees/LICENSE.txt` | CC BY-NC-SA 4.0 terms and R2D3 credits |
 | `docs/licenses/` | Licences that accompany downloadable website files |
 | `LICENSE` | MIT licence for original project code |
 | `NOTICE.md` | Scope of third-party and official-data licences |
@@ -53,6 +57,17 @@ Separate objects with commas. The order in this array is the gallery order; the 
 
 `index.html` is a folder's default page: the root one is the gallery; each visualization gets its own. Keep published folder names unchanged to preserve shared links. Folder names are case-sensitive on GitHub Pages. Avoid paths beginning with `/`, because those point to the account root rather than this project site.
 
+## Publish manually using the GitHub website
+
+1. Prepare a folder such as `my-visualization` on your computer. Put the finished page inside as `index.html`, plus any assets, a preview image, and source/licence information. For a self-contained HTML page, no build is needed.
+2. Open `docs/` in this repository on the `main` branch. Choose **Add file → Upload files**, then drag your whole `my-visualization` folder into the upload area. Check that the uploaded paths are `docs/my-visualization/...`.
+3. Commit the upload to `main`. If using a separate branch, open and merge its pull request into `main`.
+4. Edit `docs/visualizations.js` with the pencil button. Copy an existing catalogue object, insert a comma between entries, and update its title, description, `href` and thumbnail path. Commit this change too. Uploading files makes the direct page available; this catalogue entry adds it to the gallery.
+5. Open **Actions** and wait for **pages build and deployment** to succeed for the latest commit.
+6. Open `https://jonasdovern.github.io/visualizations/my-visualization/` and check the gallery link and interactions.
+
+The existing Pages setting is **Settings → Pages → Deploy from a branch → main → /docs**. It is shared by all visualizations and only needs setting once. Do not replace `docs/index.html` with an individual visualization; that file is the gallery. Upload the extracted files and folders, not a ZIP archive. For updates, replace files in the same visualization folder to keep its URL stable.
+
 ## Local preview
 
 Open `docs/index.html` directly, or serve the published directory with:
@@ -65,4 +80,4 @@ Then open http://localhost:8000/. This site has no analytics, external fonts or 
 
 ## Licences
 
-Original visualization and gallery code: MIT, see `LICENSE`. Official election data and geometry: **Datenlizenz Deutschland – Namensnennung 2.0**, with provider credits and transformation notes on the source page. Three.js: its original MIT licence. The repository MIT licence does not replace third-party or data terms. See `NOTICE.md`.
+Original gallery and election-visualization code: MIT, see `LICENSE`. The decision-tree adaptation and its embedded R2D3 housing data are **CC BY-NC-SA 4.0**, see `docs/decision-trees/LICENSE.txt`; the root MIT licence does not override those terms. Official election data and geometry: **Datenlizenz Deutschland – Namensnennung 2.0**, with provider credits and transformation notes on the source page. Three.js: its original MIT licence. The repository MIT licence does not replace third-party or data terms. See `NOTICE.md`.

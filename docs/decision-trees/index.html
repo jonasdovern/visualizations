@@ -1,0 +1,1406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Explore decision trees with real New York and San Francisco housing data. A scroll-driven, multilingual visual introduction.">
+<meta name="theme-color" content="#00529b">
+<title>A Visual Introduction to Decision Trees</title>
+<style>
+:root{--red:#c8102e;--accent:#00529b;--ink:#262124;--muted:#70666a;--line:#ded7da;--paper:#fffdfb;--soft:#f6f0f1;--ny:#00529b;--sf:#c8102e;--header:86px;--footer:0px}
+*{box-sizing:border-box}[hidden]{display:none!important}html{scroll-behavior:smooth;scroll-padding-top:var(--header)}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,"Segoe UI",sans-serif;line-height:1.6}button,select,input{font:inherit}button,select{color:inherit}button,a,select,input{touch-action:manipulation}button,select{cursor:pointer}button{border:1px solid var(--line);background:transparent;border-radius:3px;padding:8px 14px;line-height:1.35;min-height:42px}button:hover{background:var(--soft);border-color:var(--accent)}button:disabled{opacity:.35;cursor:default}button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button.primary:hover{background:#7b1425}a{color:var(--accent);text-underline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--red);outline-offset:4px}select{border:1px solid var(--line);border-radius:3px;background:var(--paper);padding:8px 30px 8px 10px;max-width:100%;min-height:42px}input[type=range]{width:100%;accent-color:var(--accent);height:24px;cursor:ew-resize}h1,h2,h3,p{margin-top:0}b,strong{font-weight:650}h1,h2{font-weight:650;letter-spacing:-.045em;line-height:1.08}h1{font-size:clamp(36px,4.1vw,66px)}h2{font-size:clamp(31px,3.1vw,48px)}h3{font-size:20px}p{margin-bottom:1.15em}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.skip{position:fixed;top:-100px;left:20px;z-index:10;background:white;padding:12px}.skip:focus{top:8px}
+.masthead{height:var(--header);position:fixed;inset:0 0 auto;z-index:5;background:rgba(255,253,251,.97);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 max(28px,calc((100vw - 1440px)/2));backdrop-filter:blur(8px)}.brand{display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--ink)}.wordmark{font-size:28px;letter-spacing:-1.5px;font-weight:750;color:var(--accent);border-right:1px solid var(--line);padding-right:18px}.course{font-size:11px;letter-spacing:.15em;font-weight:700}.topic{display:block;font-size:13px;color:var(--muted);margin-top:1px}.language{display:flex;align-items:center;gap:10px;font-size:13px}.language select{min-width:132px}.site-progress{position:absolute;bottom:-1px;left:0;height:3px;background:var(--accent);width:0;transition:width .3s}
+.story{overflow-anchor:none;position:relative;max-width:1440px;margin:auto;padding:var(--header) 36px 0;display:grid;grid-template-columns:minmax(290px,.82fr) minmax(420px,1.35fr);gap:clamp(36px,6vw,104px)}.narrative{grid-column:1;grid-row:1}.step{min-height:calc(100svh - var(--header));display:flex;flex-direction:column;justify-content:center;padding:70px 0 105px;scroll-margin-top:var(--header)}.step:last-child{padding-bottom:140px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:22px;display:flex;align-items:center;gap:12px}.eyebrow:before{content:'';width:32px;height:2px;background:var(--accent)}.step h1,.step h2{margin-bottom:30px}.step p{font-size:17px;line-height:1.75;max-width:440px}.step .scroll-cue{font-size:12px;color:var(--accent);letter-spacing:.04em;margin-top:28px}.step .scroll-cue span{display:inline-block;margin-left:14px;font-size:18px}.step .extra{font-size:13px;line-height:1.6;color:var(--muted);border-left:2px solid var(--line);padding-left:16px;margin-top:12px}.stage-column{grid-column:2;grid-row:1;min-width:0}.stage{position:sticky;top:var(--header);height:calc(100svh - var(--header) - var(--footer));min-height:510px;display:flex;flex-direction:column;justify-content:center;padding:20px 0;gap:12px}.legend{display:flex;align-items:center;justify-content:flex-end;gap:24px;flex-wrap:wrap;font-size:13px;min-height:24px}.legend-item{display:inline-flex;gap:8px;align-items:center}.swatch{display:inline-block;width:9px;height:9px;background:var(--ny)}.swatch.sf{background:var(--sf);border-radius:50%}.plot-wrap{width:100%;flex:0 1 auto;min-height:200px;position:relative}#plot{width:100%;display:block;overflow:visible}#plot text{font-family:Arial,"Segoe UI",sans-serif;fill:var(--muted);font-size:11px}#plot .axis-title{fill:var(--ink);font-size:12px}#plot .grid{stroke:var(--line);stroke-width:1;opacity:.55}#plot .axis{stroke:var(--line);stroke-width:1}#plot .split-line{stroke:var(--ink);stroke-width:1.4;stroke-dasharray:5 4}#plot .node-text{fill:var(--ink);font-size:11px}.caption{font-size:12px;color:var(--muted);line-height:1.5;min-height:36px;margin:0}.controls{font-size:13px;min-height:20px}.control-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:6px}.control-top output{font-weight:700;font-size:18px;white-space:nowrap;font-variant-numeric:tabular-nums}.control-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.control-actions button{font-size:12px;min-height:34px;padding:6px 10px}.hint{font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.5}.metrics{display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.metric{flex:1;min-width:90px}.metric span{display:block;font-size:11px;line-height:1.4;color:var(--muted)}.metric strong{display:block;font-size:23px;line-height:1.4;font-variant-numeric:tabular-nums}.metric.entropy strong{font-size:18px}.composition{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}.composition-label{font-size:11px;min-height:32px;line-height:1.4}.composition-bar{height:7px;display:flex;margin:5px 0}.composition-bar .ny{background:var(--ny)}.composition-bar .sf{background:var(--sf)}.composition-value{font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted)}.selector-row{display:flex;gap:10px;align-items:flex-end}.selector-row label{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;font-size:11px}.selector-row select{width:100%;font-size:13px}.selected-summary{font-size:12px;display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}.selected-summary b{color:var(--accent)}.route-list{font-size:12px;padding-left:22px;line-height:1.7;margin:12px 0 0}.route-list li{padding:3px 0}.route-title{margin:22px 0 6px;font-size:13px;font-weight:700}.route-list .route-leaf{font-weight:700}.chart-legend{display:flex;gap:20px;font-size:11px;margin-bottom:6px;flex-wrap:wrap}.line-key{display:inline-block;vertical-align:middle;width:20px;border-top:2px solid var(--accent);margin-right:5px}.line-key.dashed{border-top-color:var(--red);border-top-style:dashed}
+.bottom-nav{position:fixed;inset:auto 0 0;height:var(--footer);border-top:1px solid var(--line);background:rgba(255,253,251,.98);z-index:5;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:8px max(28px,calc((100vw - 1440px)/2));}.section-nav{display:flex;align-items:center;gap:14px;min-width:0}.counter{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.nav-dots{display:flex;gap:3px}.nav-dot{border:0;min-height:34px;width:22px;padding:0;position:relative}.nav-dot:after{content:'';position:absolute;left:7px;top:14px;width:6px;height:6px;border-radius:50%;background:#d4c8cc}.nav-dot[aria-current=true]:after{background:var(--accent);width:8px;height:8px;left:6px;top:13px}.nav-dot:hover{background:none}.nav-buttons{display:flex;gap:8px}.nav-buttons button{font-size:13px;min-width:94px}.data-section{border-top:1px solid var(--line);max-width:1368px;margin:0 auto 90px;padding:45px 36px 35px}.data-section details{max-width:900px}.data-section summary{font-size:18px;font-weight:650;cursor:pointer}.data-section p{font-size:13px;line-height:1.8;color:var(--muted)}.data-section .details-body{margin-top:22px}.data-links{display:flex;gap:12px 22px;flex-wrap:wrap;font-size:13px;margin:22px 0}.offline{font-size:12px;color:var(--muted);margin-top:18px}.noscript{margin:100px 30px 0;padding:20px;background:var(--soft)}
+@media(min-width:1600px){.story{gap:110px}.stage{padding:40px 0}}
+@media(max-width:1050px){.story{padding-left:26px;padding-right:26px;gap:32px;grid-template-columns:minmax(250px,.9fr) minmax(360px,1.2fr)}.step p{font-size:16px}.topic{max-width:300px}.nav-dots{gap:0}.nav-dot{width:19px}.nav-dot:after{left:6px}.nav-dot[aria-current=true]:after{left:5px}}
+@media(max-width:780px){:root{--header:72px;--footer:0px}.masthead{padding:0 18px;gap:12px}.topic{display:none}.wordmark{font-size:25px;padding-right:12px}.brand{gap:12px}.course{font-size:9px;max-width:120px}.language{gap:0}.language>span{display:none}.language select{font-size:12px;min-width:110px;padding-right:20px}.story{display:flex;flex-direction:column;gap:0;padding:var(--header) 20px 0}.stage-column{display:contents}.stage{position:sticky;order:-1;top:var(--header);z-index:3;background:var(--paper);height:auto;min-height:0;max-height:none;padding:10px 0;border-bottom:1px solid var(--line);gap:5px}.plot-wrap{min-height:0}.legend{font-size:11px;min-height:18px;gap:20px;justify-content:flex-start}.caption{min-height:0;font-size:10px;line-height:1.4}.controls{min-height:0}.controls:empty{display:none}.hint{display:none}.control-top{margin:0;font-size:11px}.control-top output{font-size:15px}.control-actions{margin-top:0}.control-actions button{font-size:10px;min-height:27px;padding:4px 7px}.metrics{margin-top:5px;padding-top:5px;gap:10px}.metric span{font-size:10px}.metric strong{font-size:18px}.metric.entropy strong{font-size:15px}.composition{display:none}.selector-row{gap:8px}.selector-row label{font-size:10px}.selector-row select{font-size:12px;min-height:34px;padding:5px}.selected-summary{margin-top:5px;font-size:11px;gap:10px}.narrative{padding-top:0}.step{min-height:90svh;justify-content:flex-start;padding:45px 0 140px;scroll-margin-top:400px}.step h1,.step h2{font-size:34px;margin-bottom:23px;max-width:550px}.step p{font-size:16px;max-width:620px}.eyebrow{margin-bottom:15px}.bottom-nav{padding:8px 14px;gap:8px}.nav-dots{display:none}.nav-buttons button{font-size:12px;min-width:76px;min-height:38px;padding:7px 10px}.data-section{padding:30px 20px}.chart-legend{font-size:10px;gap:14px;margin:0}.route-list{font-size:13px}.step .extra{font-size:12px}.stage.is-matrix .caption{display:none}}
+@media(max-height:720px) and (min-width:781px){.stage{min-height:460px;gap:7px;padding:10px 0}.caption{font-size:11px;min-height:24px}.composition{display:none}.hint{display:none}.metrics{margin-top:8px;padding-top:7px}.metric strong{font-size:21px}.step{padding-top:40px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
+@media print{.masthead,.bottom-nav,.stage-column{display:none}.story{display:block;padding:0}.step{min-height:0;padding:20px;break-inside:avoid}.step h1,.step h2{font-size:26px}.step p{max-width:none}.data-section{margin:0}.data-section details{display:block}}
+
+/* One continuous story: scrolling drives each scene; no page navigation. */
+.site-title{font-size:16px;font-weight:600;line-height:1.35;max-width:42ch}
+.step{min-height:105svh;padding-bottom:100px}
+.step:first-child{min-height:calc(100svh - var(--header))}
+#step-6,#step-10,#step-11{min-height:140svh}
+.stage{height:calc(100svh - var(--header));min-height:0}
+.data-section{margin-bottom:30px}
+.site-progress{transition:none}
+.line-key{border-top-color:var(--ny)}
+@media(max-width:780px){.site-title{font-size:12px;max-width:23ch}.stage{height:auto}.step{min-height:95svh;padding-top:40px;padding-bottom:95px}#step-6,#step-10,#step-11{min-height:125svh}.step h1{font-size:36px}.data-section{margin-bottom:0}}
+
+@media(min-width:781px){#step-9{min-height:calc(100svh - var(--header));padding-top:50px;padding-bottom:70px}}
+.flow-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px}.flow-toolbar .control-actions{margin:0}.flow-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.flow-metrics .metric{min-width:0}.metric strong span{font:inherit;color:inherit;line-height:inherit}.flow-particles{pointer-events:auto}
+@media(max-width:780px){.flow-toolbar{font-size:11px}.flow-metrics .metric strong{font-size:17px}.flow-metrics .metric span{font-size:9px}.flow-metrics .metric strong span{font-size:inherit}}
+</style>
+</head>
+<body>
+<a class="skip" href="#story" data-t="skip">Skip to the explanation</a>
+<header class="masthead">
+  <div class="site-title" data-t="topic">A Visual Introduction to Decision Trees</div>
+  <label class="language"><span data-t="lang">Language</span><select id="language" aria-label="Language"><option value="en">English</option><option value="de">Deutsch</option><option value="es">Español</option><option value="fr">Français</option><option value="uk">Українська</option><option value="zh">中文</option></select></label>
+  <div class="site-progress" id="progress" aria-hidden="true"></div>
+</header>
+<noscript><p class="noscript">Enable JavaScript to use the interactive charts. The explanations below remain readable.</p></noscript>
+<main class="story" id="story">
+  <div class="narrative" id="narrative"><section class="step" id="step-0"><h2>A Visual Introduction to Decision Trees</h2><p><b>New York or San Francisco?</b> A home has a price, a size and an elevation. Can those measurements tell us which city it is in?</p><p>Follow real housing data from a first visual rule to a decision tree. Then check whether the tree also works on homes it has never seen.</p></section>
+<section class="step" id="step-1"><h2>Start with elevation.</h2><p>San Francisco is hilly. In these training data, every home above <b>73 m</b> is in San Francisco.</p><p>That suggests a rule. But many San Francisco homes lie below that height too. One measurement does not perfectly separate the cities.</p></section>
+<section class="step" id="step-2"><h2>Add a second variable.</h2><p>Now place the same homes by <b>price per square foot</b> as well as elevation.</p><p>Some low-lying New York homes are very expensive per square foot. Two variables reveal a pattern that one variable could not show.</p></section>
+<section class="step" id="step-3"><h2>Turn patterns into rules.</h2><p>Try two illustrative rules: predict San Francisco above <b>73 m</b>; below that height, predict New York when the price exceeds <b>$1,776 per ft²</b>.</p><p>These boundaries divide the plot into regions. The remaining homes still need a rule. These thresholds are a starting intuition, not a fitted tree.</p></section>
+<section class="step" id="step-4"><h2>Look at all seven variables.</h2><p>The file also records price, floor area, construction year, bedrooms and bathrooms. A <b>scatterplot matrix</b> compares every pair.</p><p>A decision tree searches for useful splits across these variables. We use only the training homes to choose those splits.</p></section>
+<section class="step" id="step-5"><h2>Find a useful split.</h2><p>A histogram shows how many homes lie in each elevation interval. The colors show their cities.</p><p>Move the split below the chart. Homes on one side are predicted as New York; homes on the other as San Francisco.</p></section>
+<section class="step" id="step-6"><h2>Every split has errors.</h2><p>Treat San Francisco as the positive class. An SF home predicted as NY is a <b>false negative</b>. An NY home predicted as SF is a <b>false positive</b>.</p><p>Changing the threshold changes both error counts. A split at 73 m avoids false positives in the training data, but misses many SF homes.</p></section>
+<section class="step" id="step-7"><h2>Let the data choose.</h2><p>A tree prefers splits that make the two groups more homogeneous. Here we minimize their size-weighted <b>entropy</b> (log base 2). Zero means both groups are pure; this is equivalent to maximizing information gain.</p><p>For elevation, the best training split is <b>40 m</b>. It is also the best first split across all seven variables. Even this split makes some errors.</p></section>
+<section class="step" id="step-8"><h2>Repeat within each branch.</h2><p>Now repeat the search separately among the lower and higher homes. Each branch can choose a different variable and threshold.</p><p>This repeated procedure is called <b>recursion</b>. A terminal group is a leaf; its prediction is the city most common among its training homes.</p></section>
+<section class="step" id="step-9"><h2>Let the test homes pass through.</h2><p>This tree has a fixed <b>depth of 4</b>. The <b>148 test homes</b> now follow its rules. None of these observations was used to fit the tree.</p><p>Each home follows its own path to a leaf, then joins the group for its predicted city below. We compare the prediction with its actual city and count the correct classifications.</p></section>
+<section class="step" id="step-10"><h2>Grow the tree.</h2><p>As you scroll, the tree grows from two levels to its full depth. More levels allow more detailed rules. You can also adjust the depth below the chart.</p><p>At full depth, it correctly classifies <b>100%</b> of the training homes. That tells us how well it fits familiar observations; it does not establish how well it generalizes.</p></section>
+<section class="step" id="step-11"><h2>Follow one home.</h2><p>Start at the top. Answer each question using the selected home’s measurements. Continue until you reach a leaf.</p><p>The leaf gives the prediction. Select a training or test home to inspect its full route and compare the prediction with its actual city.</p></section>
+<section class="step" id="step-12"><h2>Test on unseen homes.</h2><p>Apply the fitted tree to the <b>148 held-out homes</b>. None of them was used to choose a split.</p><p>At full depth, training accuracy is <b>100%</b>, but test accuracy is <b>89.2%</b>. Extra detail can fit peculiarities of the training sample: <b>overfitting</b>.</p></section>
+<section class="step" id="step-13"><h2>What did the tree learn?</h2><p>A decision tree turns measurements into a sequence of questions. It chooses splits from training data and predicts a city at each leaf.</p><p>A perfect training score is not enough. Performance on unseen homes tells us more about whether the learned rules are useful.</p></section></div>
+  <div class="stage-column"><aside class="stage" id="stage" aria-label="Interactive visualization">
+    <div class="legend" id="legend"><span class="legend-item"><i class="swatch" aria-hidden="true"></i><span data-t="ny">New York</span></span><span class="legend-item"><i class="swatch sf" aria-hidden="true"></i><span data-t="sf">San Francisco</span></span></div>
+    <div class="chart-legend" id="curve-legend" hidden><span><i class="line-key"></i><span data-t="trainLegend"></span></span><span><i class="line-key dashed"></i><span data-t="testLegend"></span></span></div>
+    <div class="plot-wrap"><svg id="plot" role="img" aria-labelledby="plot-title plot-desc"><title id="plot-title"></title><desc id="plot-desc"></desc></svg></div>
+    <p class="caption" id="caption"></p>
+    <div class="controls" id="controls"></div>
+  </aside></div>
+</main>
+<footer class="data-section" id="data"><details><summary data-t="dataTitle">Data, method &amp; credits</summary><div class="details-body"><p data-t="dataText"></p><p data-t="methodText"></p><p data-t="creditText"></p><div class="data-links"><a href="https://r2d3.us/visual-intro-to-machine-learning-part-1/" target="_blank" rel="noopener" data-t="source"></a><a href="https://github.com/jadeyee/r2d3-part-1-data" target="_blank" rel="noopener" data-t="dataSource"></a><a href="https://narrative-flow.github.io/exploratory-study-2/" target="_blank" rel="noopener" data-t="reference"></a><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener" data-t="license"></a></div><button type="button" id="download" data-t="download"></button></div></details><p class="offline" data-t="offline"></p></footer>
+<script>
+'use strict';
+const RAW_CSV="# This dataset was collected for A Visual Introduction to Machine Learning (http://www.r2d3.us). It is available under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (http://creativecommons.org/licenses/by-nc-sa/4.0/).  We hope it helps you practice different data analysis and visualization techniques. ONE REQUEST: Please do not use this data to make any conclusions about the New York or San Francisco real estate markets. This data was collected with learning, not inference, in mind. :-)\n#\nin_sf,beds,bath,price,year_built,sqft,price_per_sqft,elevation\n0,2,1,999000,1960,1000,999,10\n0,2,2,2750000,2006,1418,1939,0\n0,2,2,1350000,1900,2150,628,9\n0,1,1,629000,1903,500,1258,9\n0,0,1,439000,1930,500,878,10\n0,0,1,439000,1930,500,878,10\n0,1,1,475000,1920,500,950,10\n0,1,1,975000,1930,900,1083,10\n0,1,1,975000,1930,900,1083,12\n0,2,1,1895000,1921,1000,1895,12\n0,3,3,2095000,1926,2200,952,4\n0,1,1,999000,1982,784,1274,5\n0,1,1,999000,1982,784,1274,5\n0,1,1,1249000,1987,826,1512,3\n0,0,1,1110000,2008,698,1590,5\n0,2,2,2059500,2008,1373,1500,5\n0,2,2,2000000,1928,1200,1667,10\n0,1,1,715000,1903,557,1284,3\n0,2,2,2498000,2005,1260,1983,2\n0,2,1.5,2650000,1915,2500,1060,5\n0,2,2,3450000,1900,1850,1865,9\n0,1,1,3105000,2016,1108,2802,10\n0,4,5,13750000,2016,3699,3717,10\n0,2,2,1185000,1900,1000,1185,4\n0,1,2,1699000,1900,1500,1133,5\n0,1,1,1195000,1900,1093,1093,6\n0,1,1,450000,1920,500,900,10\n0,1,1,1195000,1900,1093,1093,10\n0,2,2,1185000,1900,1000,1185,10\n0,0,1,625000,1964,800,781,8\n0,2,2,3159990,2012,1420,2225,8\n0,2,2,2200000,1920,2050,1073,10\n0,2,2,4895000,2016,1520,3220,10\n0,2,2,6525000,2016,2018,3233,10\n0,2,2,4895000,2016,1520,3220,11\n0,2,2,6525000,2016,2018,3233,11\n0,2,2,1675000,2006,1225,1367,12\n0,2,2,1675000,2006,1225,1367,12\n0,2,1,999000,1985,799,1250,5\n0,1,1,1550000,1926,1000,1550,6\n0,1,1,1595000,2015,714,2234,7\n0,2,2,3995000,1906,2400,1665,9\n0,1,1,1285000,2012,749,1716,10\n0,1,1,1595000,2015,714,2234,10\n0,2,2,3995000,1906,2400,1665,10\n0,2,2,4995000,1900,2024,2468,8\n0,3,2,3580000,1880,3000,1193,10\n0,3,3,6350000,2015,2500,2540,3\n0,3,3,6550000,2015,2500,2620,3\n0,3,3,5985000,1909,3300,1814,3\n0,3,3,9900000,2015,2950,3356,4\n0,1,1,1849000,1920,1400,1321,5\n0,2,2,3500000,1915,2000,1750,5\n0,2,2,3500000,1910,1887,1855,5\n0,1,1,1250000,2007,720,1736,6\n0,2,1,899000,1990,820,1096,7\n0,1,2,1950000,1900,1300,1500,7\n0,1,1,1750000,1963,1000,1750,5\n0,0,1,775000,2009,546,1419,6\n0,0,1,390000,1955,550,709,6\n0,0,1,699999,1988,500,1400,9\n0,1,1,649000,1965,750,865,10\n0,2,2,1200000,1964,1200,1000,10\n0,0,1,319000,1941,500,638,10\n0,0,1,699999,1988,500,1400,10\n0,0,1,775000,2009,546,1419,10\n0,1,1,649000,1965,750,865,10\n0,2,2,1849000,2009,1135,1629,10\n0,1,1,615000,1960,750,820,11\n0,1,1,1590000,2008,785,2025,12\n0,1,1,1150000,2014,645,1783,18\n0,2,2,2650000,2014,1240,2137,18\n0,0,1,469000,1932,500,938,18\n0,0,1,569000,1962,543,1048,8\n0,1,1,549000,1924,750,732,10\n0,2,2,799000,1928,850,940,19\n0,2,2,879000,1928,800,1099,22\n0,2,3,2999000,1925,3200,937,10\n0,2,3,2999000,1925,3200,937,10\n0,2,3,2999000,1925,3200,937,12\n0,2,3,2999000,1925,3200,937,12\n0,1,1,399000,1910,475,840,10\n0,1,1,1135000,2005,715,1587,10\n0,1,1,1145000,2005,700,1636,10\n0,1,1,1760000,1969,950,1853,10\n0,2,2,1725000,2005,976,1767,10\n0,2,2,2750000,2007,1384,1987,10\n0,2,2,2750000,2007,1384,1987,13\n0,1,1,399000,1910,475,840,14\n0,2,2,1725000,2005,1144,1508,16\n0,1,1,869000,1988,670,1297,16\n0,1,1,1760000,1969,950,1853,17\n0,3,3,1249000,1962,1500,833,18\n0,3,3,1500000,1962,1600,938,18\n0,1,1,1135000,2005,715,1587,19\n0,1,1,1145000,2005,700,1636,19\n0,2,2,1725000,2005,976,1767,19\n0,2,2,3500000,1925,1550,2258,20\n0,0,1,525000,1940,525,1000,21\n0,2,2,2025000,1940,1433,1413,21\n0,2,2,3500000,1986,1463,2392,23\n0,0,1,925000,1978,585,1581,24\n0,2,2,1700000,1982,1007,1688,25\n0,2,2,1700000,1982,1007,1688,25\n0,0,1,449000,1962,550,816,10\n0,0,1,299000,1930,400,748,12\n0,1,1,695000,1961,720,965,16\n0,1,1,695000,1961,720,965,16\n0,4,5,17750000,2012,4476,3966,20\n0,5,5,27500000,1930,7500,3667,21\n0,0,1,539000,1957,485,1111,10\n0,0,1,779000,1975,512,1521,10\n0,1,1,925000,1985,745,1242,10\n0,1,1,1319000,1958,1000,1319,10\n0,2,2,4240000,2016,1741,2435,10\n0,2,2,4285000,2016,1747,2453,10\n0,3,3,4875000,2016,2017,2417,10\n0,3,3,14950000,1931,4435,3371,10\n0,3,3,10225000,2016,3007,3400,10\n0,4,4,13400000,2016,3331,4023,10\n0,5,5,19000000,2016,4972,3821,10\n0,0,1,539000,1957,485,1111,11\n0,1,1,835000,1963,700,1193,12\n0,10,10,7995000,1910,6400,1249,12\n0,0,1,349000,1960,400,873,13\n0,1,1,588000,1970,600,980,14\n0,2,2,8690000,2002,2178,3990,15\n0,2,2,4195000,2016,1750,2397,15\n0,2,2,4195000,2016,1742,2408,15\n0,2,2,4240000,2016,1741,2435,15\n0,2,2,4285000,2016,1747,2453,15\n0,3,3,4875000,2016,2017,2417,15\n0,3,3,5750000,2016,2196,2618,15\n0,3,3,9350000,2016,3054,3062,15\n0,3,3,10225000,2016,3007,3400,15\n0,4,4,13150000,2016,3338,3939,15\n0,4,4,13400000,2016,3331,4023,15\n0,5,5,19000000,2016,4972,3821,15\n0,0,1,850000,1924,546,1557,10\n0,7,7,19500000,1994,4238,4601,10\n0,1,1,1000000,1912,612,1634,18\n0,0,1,485000,1902,310,1565,23\n0,3,2,7350000,1999,2075,3542,23\n0,1,1,1200000,1969,600,2000,23\n0,2,2,4250000,2011,1504,2826,23\n0,2,2,3600000,1960,1340,2687,24\n0,2,2,3600000,1960,1340,2687,24\n0,1,1,525000,1924,700,750,24\n0,0,1,545000,1900,387,1408,10\n0,1,1,535000,1900,450,1189,10\n0,4,4,5500000,1923,3200,1719,21\n0,4,5,12000000,1939,3700,3243,22\n0,1,2,1850000,2007,839,2205,23\n0,1,1,535000,1900,450,1189,27\n0,2,2,1350000,1931,1300,1038,36\n0,1,1,779000,1902,700,1113,10\n0,2,1,1475000,1973,971,1519,10\n0,2,2,1385000,1971,962,1440,10\n0,1,1,779000,1902,700,1113,13\n0,1,1,649000,1929,800,811,25\n0,0,1,725000,1960,600,1208,26\n0,2,1,925000,1941,790,1171,27\n0,1,1,965000,1961,787,1226,27\n0,2,1,1250000,1922,1145,1092,30\n0,1,1,650000,1907,720,903,32\n0,2,1,385000,1999,820,470,8\n0,2,2,1695000,2012,1051,1613,16\n0,1,1,600000,1899,1060,566,8\n0,2,1,910000,1899,1060,858,8\n0,8,7,2300000,1910,4180,550,9\n0,1,1,600000,1899,1060,566,10\n0,2,1,910000,1899,1060,858,10\n0,2,2,1599000,1973,1400,1142,10\n0,2,2,4625000,1987,1695,2729,10\n0,0,1,325000,1910,375,867,11\n0,2,2,1599000,1973,1400,1142,14\n0,2,2,1965000,2005,1330,1477,16\n0,1,1,735000,1928,800,919,22\n0,2,2,4625000,1987,1695,2729,29\n0,1,1,749000,2011,762,983,10\n0,1,1,499999,2011,669,747,35\n0,1,1,749000,2011,762,983,35\n0,2,2,904000,1920,1503,601,10\n0,2,2,904000,1920,1503,601,10\n0,2,1,559900,1925,1200,467,51\n0,2,1,545000,1939,1049,520,39\n0,2,1,365000,1925,700,521,73\n0,2,1,365000,1925,700,521,73\n0,1,1,935000,1910,1102,848,8\n0,0,1,820000,2013,533,1538,8\n0,0,1,835000,2013,501,1667,8\n0,1,1,935000,1910,1102,848,10\n0,1,1,1420000,2004,768,1849,10\n0,1,1,1550000,2004,794,1952,10\n0,2,2,1635000,2004,957,1708,10\n0,1,1,1550000,2004,794,1952,11\n0,1,1,1780000,2007,988,1802,14\n0,2,2,2800000,2007,1308,2141,14\n0,1,1,411500,1921,586,702,6\n0,2,2,2175000,1999,1569,1386,10\n0,2,2,1995000,1996,1044,1911,10\n0,2,2,2235000,1999,1548,1444,14\n0,4,4,8800000,1941,3382,2602,15\n0,2,2,1850000,1996,1044,1772,17\n0,2,2,1995000,1996,1044,1911,17\n0,1,1,1695000,1927,680,2493,17\n0,1,1,1495000,1962,1125,1329,19\n0,2,2,2200000,2000,1044,2107,2\n0,0.5,1,384900,1962,540,713,10\n0,1,1,515000,1962,725,710,10\n0,3,2,1950000,1956,1600,1219,10\n0,0,1,307000,1910,330,930,15\n0,2,2,1735000,1980,1585,1095,18\n0,3,3,1850000,2005,1353,1367,8\n0,3,3,1850000,2005,1353,1367,10\n0,2,2,1995000,1986,1406,1419,14\n0,2,2,2900000,1987,1600,1813,24\n0,2,2,2499000,2004,1658,1507,24\n0,2,2,1575000,1930,1324,1190,33\n0,3,3,1495000,1990,1360,1099,0\n0,1,1,529000,1986,650,814,0\n0,3,3,2695000,2006,1991,1354,1\n0,3,3,2695000,2006,1991,1354,1\n0,4,3,3895000,2001,2277,1711,0\n1,1,1,550000,1982,724,760,24\n1,2,2,849000,1982,1030,824,24\n1,3,2,1750000,1900,2950,593,26\n1,1,1,799000,2008,847,943,29\n1,1,1.5,899000,1997,1453,619,3\n1,1,1,598000,2005,534,1120,5\n1,1,2,1088000,1998,1086,1002,6\n1,1,1,798000,1926,769,1038,10\n1,1,1,798000,1926,769,1038,10\n1,1,1,1495000,1927,2275,657,10\n1,4,4,4300000,2006,3321,1295,10\n1,1,1,699000,2008,756,925,12\n1,2,2,334905,2000,1047,320,12\n1,1,1.5,849000,1996,1127,753,13\n1,1,1.5,1365000,1996,1607,849,13\n1,1,1,649000,2011,674,963,14\n1,3,3,1245000,1907,1503,828,23\n1,1,1,649000,1983,850,764,163\n1,2,2,1700000,1987,1250,1360,11\n1,2,2,1980000,2009,1469,1348,0\n1,2,2,3600000,2009,1652,2179,0\n1,2,3,4995000,2009,2230,2240,0\n1,2,2,1298000,2008,1159,1120,0\n1,2,2,2149000,2008,1317,1632,0\n1,3,2,1995000,2006,1362,1465,3\n1,2,2,1650000,1937,1640,1006,7\n1,1,1,949000,2010,824,1152,8\n1,1,1,187518,2000,670,280,12\n1,3,2.5,1995000,2008,2354,847,23\n1,3,2.5,1995000,2008,2354,847,23\n1,2,2,2799000,2008,1328,2108,35\n1,2,2.5,1050000,2000,1640,640,2\n1,2,2,895000,2006,1113,804,3\n1,1,1,998000,2006,872,1144,3\n1,2,2,1659000,2000,1165,1424,4\n1,1,1,788000,2004,903,873,4\n1,2,2,1395000,2001,1334,1046,4\n1,2,2,1299000,2004,1453,894,5\n1,2,2.5,850000,2000,1136,748,5\n1,3,2.5,2850000,2013,2075,1373,5\n1,2,2,950000,2000,1258,755,6\n1,2,2,1600000,2002,1173,1364,7\n1,3,2,1275000,2001,1502,849,13\n1,1,1.5,775000,2009,835,928,14\n1,3,2,1399000,1892,1809,773,41\n1,2,2,879000,1912,950,925,53\n1,1,1,699000,1907,932,750,59\n1,1,1,985000,1978,884,1114,11\n1,1,1,725000,1978,1063,682,60\n1,2,2,849000,1911,1100,772,66\n1,1,1,618000,1973,705,877,72\n1,2,2,5950000,1989,3700,1608,83\n1,4,4,1800000,1948,2475,727,10\n1,2,2.5,2350000,2008,1314,1788,19\n1,1,1,740200,1920,989,748,41\n1,1,1,699000,1982,780,896,51\n1,2,2,958000,2005,915,1047,54\n1,2,2,1200000,1909,1302,922,56\n1,3,3,1575000,1993,2233,705,62\n1,2,2,1199000,1964,1100,1090,68\n1,1,1,529000,1966,791,669,69\n1,1,1,699000,1984,880,794,73\n1,3,2,1295000,1926,1675,773,77\n1,4,4,1800000,1948,2347,767,87\n1,1,1,795000,2000,990,803,7\n1,2,2,779000,2007,808,964,7\n1,1,1.5,378551,2000,1000,379,9\n1,4,2.3,1398000,1904,2492,561,13\n1,2,1.3,1097000,1904,1493,735,14\n1,1,1,670000,2014,507,1321,20\n1,2,2,1199000,2014,943,1271,20\n1,2,2,1095000,2010,1135,965,30\n1,1,2,795000,2014,616,1291,31\n1,3,2,979000,1900,1440,680,33\n1,3,3,1488888,1977,2100,709,38\n1,3,2,1389000,1908,1546,898,55\n1,3,2,1389000,1908,1546,898,55\n1,4,2,1099000,1962,1267,867,69\n1,3,3.5,1799000,1900,2449,735,75\n1,3,2,1250000,1924,1450,862,83\n1,3,2,998000,1907,1464,682,84\n1,3,2.5,1300000,1975,1642,792,4\n1,1,1,539000,2000,709,760,5\n1,1,1,735000,1983,779,944,12\n1,3,2,688000,1942,1441,477,34\n1,2,1,859000,1890,1100,781,44\n1,3,2,699000,1964,1250,559,48\n1,2,1,750000,1924,980,765,48\n1,3,2,549000,1915,1972,278,51\n1,6,3,1600000,1926,2567,623,52\n1,2,2,875000,1909,1700,515,54\n1,4,3,900000,2003,1870,481,54\n1,3,2,748000,1930,1522,491,54\n1,2,1.5,749000,1949,1348,556,56\n1,2,1,599000,1942,707,847,61\n1,3,1,648800,1940,1325,490,66\n1,2,2,649000,1924,1320,492,72\n1,2,1,798888,1929,1025,779,74\n1,5,2,899000,1972,1940,463,81\n1,3,1.5,699000,1910,1625,430,94\n1,3,2,749000,1907,1513,495,95\n1,3,2,535000,1967,1824,293,102\n1,2,1,699000,1913,900,777,108\n1,2,1,699000,1913,900,777,108\n1,2,1,500000,1958,1166,429,136\n1,3,2.5,879000,1981,2111,416,139\n1,3,2.5,879000,1981,2111,416,139\n1,4,2.5,699900,1982,1752,399,140\n1,2,1,688000,1950,1145,601,143\n1,3,2,1195000,1907,1396,856,33\n1,3,2,1195000,1907,1396,856,33\n1,1,1,697000,1922,694,1004,50\n1,5,3.5,3995000,1905,3350,1193,59\n1,1,1,650000,1955,600,1083,74\n1,1,1,650000,1955,600,1083,74\n1,1,1,775000,1955,600,1292,74\n1,1,1,825000,1955,600,1375,74\n1,2,1,699000,1907,915,764,89\n1,3,2,1495000,1927,1520,984,105\n1,4,4.5,5200000,1952,4813,1080,238\n1,2,2,989000,1984,988,1001,46\n1,3,1,1095000,1895,1465,747,68\n1,1,1,725000,1900,811,894,70\n1,1,1,725000,1900,811,894,70\n1,4,4,2650000,1900,3816,694,75\n1,2,2,1680000,1962,1850,908,89\n1,1,1,1199000,1906,1139,1053,91\n1,3,2.5,799000,1947,1400,571,35\n1,3,2,795000,1954,1350,589,36\n1,2,1,699000,1944,995,703,41\n1,3,2,848000,1940,1500,565,42\n1,3,2,899000,1948,1665,540,52\n1,3,2,899000,1948,1665,540,52\n1,6,4,1198000,1937,1965,610,79\n1,3,3,1100000,1925,2633,418,91\n1,6,3.5,949000,1918,2473,384,97\n1,5,5,2990000,2014,5000,598,108\n1,4,3,1338800,1940,2330,575,119\n1,3,2.5,1388000,1928,1905,729,160\n1,3,2,989000,1940,1603,617,227\n1,3,1,1295000,1890,1772,731,65\n1,6,6,6895000,1902,7800,884,67\n1,2,2,1725000,1922,1415,1219,86\n1,3,3,1995000,1922,1915,1042,88\n1,0,1,499000,1900,510,978,91\n1,0,1,499000,1900,510,978,91\n1,1,1,599000,1900,624,960,91\n1,1,1,599000,1900,624,960,91\n1,3,2,1200000,1929,1284,935,121\n1,3,2,1395000,1909,1877,743,57\n1,3,3,1785000,1925,1970,906,58\n1,3,2,1099000,1905,1457,754,67\n1,5,5.5,3495000,1921,4310,811,73\n1,3,2,2395000,1929,2323,1031,73\n1,4,2.5,2549000,1907,2746,928,75\n1,3,2,995000,2000,1393,714,75\n1,5,3.5,6495000,1906,4609,1409,89\n1,4,3,1698000,1890,1789,949,102\n1,5,2,6298000,1914,3585,1757,26\n1,3,3,1139000,2008,1532,743,44\n1,3,2,1080000,1914,1954,553,49\n1,4,1,1050000,1932,1767,594,55\n1,1,1,739900,1941,875,846,70\n1,4,4,1595000,1925,2750,580,81\n1,2,1,699000,1907,1200,583,14\n1,2,1,799000,1938,1150,695,36\n1,4,2.5,995000,1915,2180,456,62\n1,2,1,829000,1925,1145,724,71\n1,2,1,875000,1908,1158,756,84\n1,5,3,950000,1939,1846,515,97\n1,2,1,749000,1936,1450,517,110\n1,2,1,749000,1936,1450,517,110\n1,6,6.5,9500000,1937,5420,1753,3\n1,4,3,3595000,1931,3017,1192,9\n1,2,1.5,1425000,1925,1360,1048,14\n1,1,1,865000,1993,960,901,17\n1,2,2.5,2495000,1940,1809,1379,48\n1,2,2,2000000,1925,1518,1318,50\n1,4,3.5,9895000,2008,6024,1643,62\n1,3,2,358000,1989,1325,270,5\n1,3,2.5,899000,2015,1391,646,5\n1,3,2.5,929000,2015,1391,668,5\n1,4,4,850000,1928,2470,344,8\n1,2,1,648000,1921,1125,576,11\n1,2,1,480000,1915,680,706,13\n1,1,1,499000,1900,1076,464,19\n1,4,2,689000,1951,1473,468,21\n1,2,2,669000,1986,1317,508,23\n1,2,1.5,729000,1942,1012,720,27\n1,2,2,767000,1916,1380,556,31\n1,3,1,660000,1900,1520,434,35\n1,2,1,995000,1908,600,1658,36\n1,2,1,759900,1941,1175,647,43\n1,6,3.5,995000,2001,3080,323,55\n1,2,1,725000,1945,1040,697,60\n1,4,3,3420000,1926,5113,669,98\n1,3,2,1650000,1922,2025,815,106\n1,3,3.5,2250000,1928,3258,691,127\n1,3,1,1319000,1925,1752,753,141\n1,5,3.5,1698000,1966,2769,613,176\n1,3,2,1049000,1947,1626,645,179\n1,2,2,599000,1990,862,695,181\n1,5,3.5,2995000,1947,3890,770,181\n1,3,2,995000,1956,1305,762,216\n1,1,1,350000,1908,600,583,43\n1,2,1,550000,1908,800,688,43\n1,4,4,3760000,1900,3085,1219,49\n1,3,2,1050000,1922,1266,829,52\n1,2,2,1895000,1907,1756,1079,54\n1,1,1,599000,1961,680,881,56\n1,4,3,1895000,2001,2041,928,61\n1,3,2,1799000,1926,1800,999,66\n1,2,1,600000,1908,1350,444,92\n1,2,1,1495000,1908,1700,879,98\n1,3,2,1595000,1961,1515,1053,103\n1,3,2,849000,1947,1622,523,106\n1,4,3.5,1995000,1992,3312,602,108\n1,3,2,1495000,1937,1635,914,112\n1,3,3.5,2195000,1922,2168,1012,125\n1,4,2,1798000,1951,2050,877,131\n1,2,2,849000,1978,1555,546,139\n1,3,2,1159000,1977,1731,670,143\n1,3,2.5,995000,1976,1959,508,163\n1,4,3,1388000,1968,2275,610,163\n1,5,3.5,2250000,1962,3729,603,174\n1,3,2,1080000,1989,1524,709,185\n1,3,2.5,1095000,1968,1868,586,187\n1,2,1,599000,1972,990,605,189\n1,2,1,915000,1954,1251,731,24\n1,2,1,915000,1954,1251,731,24\n1,3,2,725000,1975,1474,492,34\n1,3,2.5,1588000,2015,2001,794,43\n1,2,1,795000,1941,1256,633,63\n1,2,1,795000,1941,1256,633,63\n1,4,2,848000,1949,1646,515,69\n1,1,1,439000,2002,667,658,80\n1,3,2,849900,1958,1310,649,118\n1,2,1,599000,1941,1254,478,123\n1,3,2.5,1539514,2014,2024,761,136\n1,3,2.5,1339000,2015,2133,628,143\n1,3,2.5,1294000,2015,2133,607,143\n1,3,2.5,1611000,2015,2001,805,153\n1,2,2,1495000,1913,1174,1273,35\n1,1,1,699000,1908,750,932,36\n1,2,2.5,3495000,1900,1968,1776,76\n1,4,2,699000,1949,1550,451,11\n1,2,1,699000,1949,1050,666,64\n1,3,3,888000,1975,1555,571,79\n1,1,1,599000,1945,631,949,84\n1,3,3,758000,1989,2157,351,90\n1,2,2,1698000,2008,1620,1048,1\n1,2,2,1698000,2008,1620,1048,1\n1,1,1,849000,2012,886,958,2\n1,2,2,1675000,2012,1562,1072,2\n1,2,2,1695000,2007,1610,1053,2\n1,3,2,2219000,2012,1921,1155,13\n1,1,1,788000,2004,903,873,4\n1,2,2,1950000,1995,1930,1010,4\n1,0,1,539000,2000,709,760,5\n1,2,2,849000,1982,1030,824,24\n1,2,2.5,2495000,1940,1809,1379,48\n1,4,4,3760000,1894,3085,1219,49\n1,3,2,1799000,1926,1800,999,66\n1,5,2.5,1800000,1890,3073,586,76\n1,2,1,695000,1923,1045,665,106\n1,3,2,1650000,1922,1483,1113,106\n1,1,1,649000,1983,850,764,163\n1,3,2,995000,1956,1305,762,216";
+// Deterministic binary decision tree using Shannon entropy (log base 2). Raw feature units are retained: elevation in m,
+// price in USD, floor area in square feet. Labels: 0 = NY; 1 = SF.
+const FEATURES = ['elevation','price_per_sqft','price','sqft','year_built','beds','bath'];
+function parseCSV(text) {
+  const lines=text.trim().split(/\r?\n/).filter(l=>l && !l.startsWith('#'));
+  const keys=lines.shift().split(',');
+  return lines.map((line,id)=>Object.fromEntries([['id',id],...line.split(',').map((v,i)=>[keys[i],Number(v)])]));
+}
+// Presentation sequence only: visit each distinct home once before wrapping.
+// Keep original row IDs so selection still refers to the embedded source data.
+function homeSequence(rows,random=Math.random) {
+  const unique=new Map();
+  for(const row of rows){const key=[...FEATURES.map(k=>row[k]),row.in_sf].join('|');if(!unique.has(key))unique.set(key,row);}
+  const homes=[...unique.values()];
+  for(let i=homes.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[homes[i],homes[j]]=[homes[j],homes[i]];}
+  return homes;
+}
+function partition(rows,seed=2026) {
+  let state=seed>>>0;
+  const rand=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
+  // Identical predictors are kept in one partition, including any conflicting labels.
+  const groups=new Map();
+  rows.forEach(r=>{const key=FEATURES.map(k=>r[k]).join('|');if(!groups.has(key)) groups.set(key,[]);groups.get(key).push(r);});
+  const train=[],test=[];
+  for(const label of [0,1]) {
+    const a=[...groups.values()].filter(g=>g[0].in_sf===label);
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    const cut=Math.round(a.length*.7);
+    a.forEach((g,i)=>(i<cut?train:test).push(...g));
+  }
+  return {train:train.sort((a,b)=>a.id-b.id),test:test.sort((a,b)=>a.id-b.id)};
+}
+function entropy(n,sf){if(!n||!sf||sf===n)return 0;const p=sf/n;return -p*Math.log2(p)-(1-p)*Math.log2(1-p);}
+function bestSplit(rows,features=FEATURES) {
+  let best=null; const total=rows.reduce((s,r)=>s+r.in_sf,0),n=rows.length;
+  for(const key of features) {
+    const a=[...rows].sort((a,b)=>a[key]-b[key]);let left=0;
+    for(let i=0;i<n-1;i++){
+      left+=a[i].in_sf;if(a[i][key]===a[i+1][key])continue;
+      const count=i+1, score=(count*entropy(count,left)+(n-count)*entropy(n-count,total-left))/n;
+      if(!best || score<best.score-1e-12)best={key,threshold:(a[i][key]+a[i+1][key])/2,score};
+    }
+  }
+  return best;
+}
+function grow(rows,depth=0,id='r') {
+  const sf=rows.reduce((s,r)=>s+r.in_sf,0);
+  const node={id,depth,n:rows.length,sf,pred:sf>rows.length/2?1:0};
+  if(sf===0 || sf===rows.length || depth>=25)return node;
+  const split=bestSplit(rows);if(!split || split.score>=entropy(rows.length,sf)-1e-12)return node;
+  Object.assign(node,split);
+  node.left=grow(rows.filter(r=>r[split.key]<=split.threshold),depth+1,id+'L');
+  node.right=grow(rows.filter(r=>r[split.key]>split.threshold),depth+1,id+'R');
+  return node;
+}
+function route(tree,row,maxDepth=25){const path=[tree];while(tree.left && tree.depth<maxDepth){tree=row[tree.key]<=tree.threshold?tree.left:tree.right;path.push(tree);}return path;}
+function predict(tree,row,maxDepth=25){return route(tree,row,maxDepth).at(-1).pred;}
+function accuracy(tree,rows,maxDepth=25){return rows.filter(r=>predict(tree,r,maxDepth)===r.in_sf).length/rows.length;}
+function maxDepth(tree){return tree.left?Math.max(maxDepth(tree.left),maxDepth(tree.right)):tree.depth;}
+function splitStats(rows,threshold){
+  const left=rows.filter(r=>r.elevation<=threshold),right=rows.filter(r=>r.elevation>threshold);
+  const summarize=a=>({n:a.length,sf:a.reduce((s,r)=>s+r.in_sf,0),ny:a.filter(r=>!r.in_sf).length});
+  const l=summarize(left),r=summarize(right);
+  // This exercise fixes predictions at NY on the left and SF on the right.
+  return {left:l,right:r,fn:l.sf,fp:r.ny,accuracy:(l.ny+r.sf)/rows.length,entropy:(l.n*entropy(l.n,l.sf)+r.n*entropy(r.n,r.sf))/rows.length};
+}
+
+// Pure timing and scoring for the held-out sample animation.
+// Ordering changes presentation only, never fitting or partition membership.
+
+const FLOW_DEPTH=4, FLOW_ENTRY=350, FLOW_EDGE=425, FLOW_EXIT=650;
+function testFlow(tree,observations,limit=FLOW_DEPTH){
+  const mixed=[...observations].sort((a,b)=>((Math.imul(a.id+1,2654435761)>>>0)-(Math.imul(b.id+1,2654435761)>>>0)));
+  return mixed.map((row,index)=>{
+    const nodes=route(tree,row,limit),prediction=nodes.at(-1).pred,start=index*55;
+    return {row,path:nodes.map(n=>n.id),prediction,correct:prediction===row.in_sf,start,
+      finish:start+FLOW_ENTRY+(nodes.length-1)*FLOW_EDGE+FLOW_EXIT};
+  });
+}
+function flowTotals(items,elapsed){
+  const arrived=items.filter(item=>elapsed>=item.finish),correct=arrived.filter(item=>item.correct).length;
+  return {processed:arrived.length,correct,wrong:arrived.length-correct,accuracy:arrived.length?correct/arrived.length:null};
+}
+function flowPoint(item,points,elapsed){
+  let time=Math.max(0,elapsed-item.start);
+  for(let i=0;i<points.length-1;i++){
+    const duration=i===0?FLOW_ENTRY:i===points.length-2?FLOW_EXIT:FLOW_EDGE;
+    if(time<=duration){
+      const u=time/duration,v=1-u,p=points[i],q=points[i+1],mid=(p.y+q.y)/2;
+      return {x:v*v*v*p.x+3*v*v*u*p.x+3*v*u*u*q.x+u*u*u*q.x,
+        y:v*v*v*p.y+3*v*v*u*mid+3*v*u*u*mid+u*u*u*q.y};
+    }
+    time-=duration;
+  }
+  return points.at(-1);
+}
+
+const translations = {
+  "en": {
+    "lang": "Language",
+    "course": "DATA SCIENCE",
+    "topic": "A Visual Introduction to Decision Trees",
+    "previous": "Previous",
+    "next": "Next",
+    "restart": "Back to the beginning",
+    "step": "Step",
+    "of": "of",
+    "scroll": "Scroll to explore",
+    "jump": "Go to a section",
+    "ny": "New York",
+    "sf": "San Francisco",
+    "home": "Home",
+    "homes": "homes",
+    "training": "Training data",
+    "testing": "Test data",
+    "trainAccuracy": "Training accuracy",
+    "testAccuracy": "Test accuracy",
+    "accuracy": "Accuracy",
+    "correct": "correct",
+    "elevation": "Elevation",
+    "price_per_sqft": "Price / ft²",
+    "price": "Price",
+    "sqft": "Floor area",
+    "year_built": "Year built",
+    "beds": "Bedrooms",
+    "bath": "Bathrooms",
+    "count": "Number of homes",
+    "features": "Seven variables",
+    "split": "Elevation split",
+    "depth": "Maximum tree depth",
+    "best": "Use best split",
+    "initial": "Use 73 m",
+    "left": "At or below the split → predict NY",
+    "right": "Above the split → predict SF",
+    "fn": "SF predicted as NY",
+    "fp": "NY predicted as SF",
+    "impurity": "Weighted entropy",
+    "choose": "Choose a home",
+    "sample": "Data to classify",
+    "nextHome": "Next home",
+    "replay": "Follow the route",
+    "actual": "Actual city",
+    "prediction": "Prediction",
+    "route": "Decision path",
+    "yes": "Yes",
+    "no": "No",
+    "leaf": "Leaf",
+    "depthAxis": "Tree depth",
+    "trainLegend": "Training",
+    "testLegend": "Test",
+    "plotIntro": "Training homes, grouped by their actual city.",
+    "plotElevation": "Each symbol is one training home. Horizontal spacing only separates overlapping symbols.",
+    "plotScatter": "Each symbol is one training home.",
+    "plotBoundary": "Shaded regions show the two illustrative rules. The unshaded area is still unresolved.",
+    "plotMatrix": "Pairwise relationships in the training data. Every panel uses all training homes.",
+    "plotHist": "Stacked counts of training homes in 10 m elevation bins.",
+    "plotTree": "Branches test one variable at a time. Leaves predict the majority city.",
+    "plotPredict": "The highlighted path belongs to the selected home.",
+    "plotTest": "The same training tree, evaluated at different depths. Test homes never determine its splits.",
+    "splitHint": "Move the split. Here, lower homes are predicted as NY and higher homes as SF.",
+    "depthHint": "Depth 0 makes one majority prediction for every home. Each extra level allows another question.",
+    "testHint": "Use these test results to illustrate generalization. Choosing a depth with them would require a fresh test set for an unbiased final evaluation.",
+    "dataTitle": "Data, method & credits",
+    "dataText": "The original R2D3 housing file contains 492 records and seven predictors. This page uses 344 records for training and 148 for testing. The split is fixed (seed 2026); identical predictor rows stay together. Elevation is in metres; prices are in US dollars and floor areas in square feet. These are historical teaching data, not a representative housing-market sample.",
+    "methodText": "The tree is fitted locally using binary splits and size-weighted entropy (log base 2), equivalent to maximizing information gain. Each split uses training data only; ties in a leaf predict New York. The full tree has depth {fullDepth}. The test animation fixes the depth at 4. This is a new fit to the published CSV, so thresholds and accuracies differ from the original story.",
+    "creditText": "Housing example and data: Stephanie Yee & Tony Chu (R2D3). Inspired by their visual introduction and the Narrative Flow study. New implementation, explanations and translations. The dataset and this adaptation are shared under CC BY-NC-SA 4.0.",
+    "download": "Download original CSV",
+    "source": "Original R2D3 story",
+    "dataSource": "Dataset source",
+    "reference": "Reference page",
+    "license": "CC BY-NC-SA 4.0",
+    "offline": "Everything runs locally in this HTML file.",
+    "skip": "Skip to the explanation",
+    "noscript": "Enable JavaScript to use the interactive charts. The explanations below remain readable.",
+    "steps": [
+      [
+        "A Visual Introduction to Decision Trees",
+        "<b>New York or San Francisco?</b> A home has a price, a size and an elevation. Can those measurements tell us which city it is in?",
+        "Follow real housing data from a first visual rule to a decision tree. Then check whether the tree also works on homes it has never seen."
+      ],
+      [
+        "Start with elevation.",
+        "San Francisco is hilly. In these training data, every home above <b>73 m</b> is in San Francisco.",
+        "That suggests a rule. But many San Francisco homes lie below that height too. One measurement does not perfectly separate the cities."
+      ],
+      [
+        "Add a second variable.",
+        "Now place the same homes by <b>price per square foot</b> as well as elevation.",
+        "Some low-lying New York homes are very expensive per square foot. Two variables reveal a pattern that one variable could not show."
+      ],
+      [
+        "Turn patterns into rules.",
+        "Try two illustrative rules: predict San Francisco above <b>73 m</b>; below that height, predict New York when the price exceeds <b>$1,776 per ft²</b>.",
+        "These boundaries divide the plot into regions. The remaining homes still need a rule. These thresholds are a starting intuition, not a fitted tree."
+      ],
+      [
+        "Look at all seven variables.",
+        "The file also records price, floor area, construction year, bedrooms and bathrooms. A <b>scatterplot matrix</b> compares every pair.",
+        "A decision tree searches for useful splits across these variables. We use only the training homes to choose those splits."
+      ],
+      [
+        "Find a useful split.",
+        "A histogram shows how many homes lie in each elevation interval. The colors show their cities.",
+        "Move the split below the chart. Homes on one side are predicted as New York; homes on the other as San Francisco."
+      ],
+      [
+        "Every split has errors.",
+        "Treat San Francisco as the positive class. An SF home predicted as NY is a <b>false negative</b>. An NY home predicted as SF is a <b>false positive</b>.",
+        "Changing the threshold changes both error counts. A split at 73 m avoids false positives in the training data, but misses many SF homes."
+      ],
+      [
+        "Let the data choose.",
+        "A tree prefers splits that make the two groups more homogeneous. Here we minimize their size-weighted <b>entropy</b> (log base 2). Zero means both groups are pure; this is equivalent to maximizing information gain.",
+        "For elevation, the best training split is <b>{bestSplit}</b>. It is also the best first split across all seven variables. Even this split makes some errors."
+      ],
+      [
+        "Repeat within each branch.",
+        "Now repeat the search separately among the lower and higher homes. Each branch can choose a different variable and threshold.",
+        "This repeated procedure is called <b>recursion</b>. A terminal group is a leaf; its prediction is the city most common among its training homes."
+      ],
+      [
+        "Let the test homes pass through.",
+        "This tree has a fixed <b>depth of 4</b>. The <b>{testN} test homes</b> now follow its rules. None of these observations was used to fit the tree.",
+        "Each home follows its own path to a leaf, then joins the group for its predicted city below. We compare the prediction with its actual city and count the correct classifications."
+      ],
+      [
+        "Grow the tree.",
+        "As you scroll, the tree grows from two levels to its full depth. More levels allow more detailed rules. You can also adjust the depth below the chart.",
+        "At full depth, it correctly classifies <b>{fullTrain}</b> of the training homes. That tells us how well it fits familiar observations; it does not establish how well it generalizes."
+      ],
+      [
+        "Follow one home.",
+        "Start at the top. Answer each question using the selected home’s measurements. Continue until you reach a leaf.",
+        "The leaf gives the prediction. Select a training or test home to inspect its full route and compare the prediction with its actual city."
+      ],
+      [
+        "Test on unseen homes.",
+        "Apply the fitted tree to the <b>{testN} held-out homes</b>. None of them was used to choose a split.",
+        "At full depth, training accuracy is <b>{fullTrain}</b>, but test accuracy is <b>{fullTest}</b>. Extra detail can fit peculiarities of the training sample: <b>overfitting</b>."
+      ],
+      [
+        "What did the tree learn?",
+        "A decision tree turns measurements into a sequence of questions. It chooses splits from training data and predicts a city at each leaf.",
+        "A perfect training score is not enough. Performance on unseen homes tells us more about whether the learned rules are useful."
+      ]
+    ],
+    "plotFlow": "Depth 4 · Test homes. Color and shape show the actual city; the groups below show the predicted city.",
+    "processed": "Classified",
+    "wrong": "Incorrect",
+    "flowPause": "Pause",
+    "flowResume": "Continue",
+    "flowReplay": "Replay",
+    "flowComplete": "Complete",
+    "flowStatus": "Running",
+    "flowCorrect": "Correct"
+  },
+  "de": {
+    "lang": "Sprache",
+    "course": "DATA SCIENCE",
+    "topic": "Eine visuelle Einführung in Entscheidungsbäume",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "restart": "Zurück zum Anfang",
+    "step": "Schritt",
+    "of": "von",
+    "scroll": "Zum Erkunden scrollen",
+    "jump": "Abschnitt auswählen",
+    "ny": "New York",
+    "sf": "San Francisco",
+    "home": "Immobilie",
+    "homes": "Immobilien",
+    "training": "Trainingsdaten",
+    "testing": "Testdaten",
+    "trainAccuracy": "Trainingsgenauigkeit",
+    "testAccuracy": "Testgenauigkeit",
+    "accuracy": "Trefferquote",
+    "correct": "richtig",
+    "elevation": "Höhenlage",
+    "price_per_sqft": "Preis / ft²",
+    "price": "Preis",
+    "sqft": "Wohnfläche",
+    "year_built": "Baujahr",
+    "beds": "Schlafzimmer",
+    "bath": "Badezimmer",
+    "count": "Anzahl Immobilien",
+    "features": "Sieben Variablen",
+    "split": "Trennwert der Höhenlage",
+    "depth": "Maximale Baumtiefe",
+    "best": "Besten Trennwert nutzen",
+    "initial": "73 m verwenden",
+    "left": "Bis zum Trennwert → Prognose NY",
+    "right": "Über dem Trennwert → Prognose SF",
+    "fn": "SF als NY vorhergesagt",
+    "fp": "NY als SF vorhergesagt",
+    "impurity": "Gewichtete Entropie",
+    "choose": "Immobilie auswählen",
+    "sample": "Zu klassifizierende Daten",
+    "nextHome": "Nächste Immobilie",
+    "replay": "Pfad verfolgen",
+    "actual": "Tatsächliche Stadt",
+    "prediction": "Vorhersage",
+    "route": "Entscheidungspfad",
+    "yes": "Ja",
+    "no": "Nein",
+    "leaf": "Blatt",
+    "depthAxis": "Baumtiefe",
+    "trainLegend": "Training",
+    "testLegend": "Test",
+    "plotIntro": "Trainingsimmobilien, nach ihrer tatsächlichen Stadt gruppiert.",
+    "plotElevation": "Jedes Symbol steht für eine Trainingsimmobilie. Der horizontale Abstand trennt überlappende Symbole.",
+    "plotScatter": "Jedes Symbol steht für eine Trainingsimmobilie.",
+    "plotBoundary": "Farbige Flächen zeigen die beiden beispielhaften Regeln. Die ungefärbte Fläche ist noch nicht zugeordnet.",
+    "plotMatrix": "Paarweise Zusammenhänge in den Trainingsdaten. Jedes Feld zeigt alle Trainingsimmobilien.",
+    "plotHist": "Gestapelte Häufigkeiten in Höhenintervallen von 10 m.",
+    "plotTree": "Jede Verzweigung prüft eine Variable. Blätter sagen die häufigste Stadt vorher.",
+    "plotPredict": "Der hervorgehobene Pfad gehört zur ausgewählten Immobilie.",
+    "plotTest": "Derselbe Trainingsbaum, bei unterschiedlichen Tiefen ausgewertet. Testimmobilien bestimmen keine Trennwerte.",
+    "splitHint": "Verschieben Sie den Trennwert. Hier werden niedrigere Immobilien als NY und höhere als SF vorhergesagt.",
+    "depthHint": "Bei Tiefe 0 erhalten alle Immobilien dieselbe Mehrheitsprognose. Jede weitere Ebene erlaubt eine zusätzliche Frage.",
+    "testHint": "Die Testergebnisse veranschaulichen die Generalisierung. Wird damit eine Tiefe gewählt, braucht eine unverzerrte abschließende Bewertung einen neuen Testdatensatz.",
+    "dataTitle": "Daten, Methode & Quellen",
+    "dataText": "Die Originaldatei von R2D3 enthält 492 Beobachtungen und sieben Merkmale. Diese Seite verwendet 344 Beobachtungen zum Trainieren und 148 zum Testen. Die Aufteilung ist fest (Seed 2026); identische Merkmalszeilen bleiben zusammen. Höhenlagen sind in Metern, Preise in US-Dollar und Flächen in Quadratfuß angegeben. Es handelt sich um historische Lehrdaten, nicht um eine repräsentative Immobilienmarktstichprobe.",
+    "methodText": "Der Baum wird lokal mit binären Aufteilungen und nach Gruppengröße gewichteter Entropie (Logarithmus zur Basis 2) geschätzt. Das entspricht der Maximierung des Informationsgewinns. Trennwerte werden ausschließlich aus Trainingsdaten bestimmt; bei Gleichstand sagt ein Blatt New York vorher. Der vollständige Baum hat die Tiefe {fullDepth}. In der Testanimation ist die Tiefe auf 4 begrenzt. Das Modell wird neu aus der veröffentlichten CSV geschätzt. Daher unterscheiden sich Trennwerte und Trefferquoten vom Original.",
+    "creditText": "Immobilienbeispiel und Daten: Stephanie Yee & Tony Chu (R2D3). Inspiriert von ihrer visuellen Einführung und der Narrative-Flow-Studie. Neue Umsetzung, Erläuterungen und Übersetzungen. Datensatz und diese Adaption stehen unter CC BY-NC-SA 4.0.",
+    "download": "Original-CSV herunterladen",
+    "source": "Original von R2D3",
+    "dataSource": "Datenquelle",
+    "reference": "Referenzseite",
+    "license": "CC BY-NC-SA 4.0",
+    "offline": "Alles läuft lokal in dieser HTML-Datei.",
+    "skip": "Zur Erklärung springen",
+    "noscript": "Aktivieren Sie JavaScript für die interaktiven Grafiken. Die Erklärungen bleiben auch ohne JavaScript lesbar.",
+    "steps": [
+      [
+        "Eine visuelle Einführung in Entscheidungsbäume",
+        "<b>New York oder San Francisco?</b> Eine Immobilie hat einen Preis, eine Fläche und eine Höhenlage. Verraten diese Merkmale, in welcher Stadt sie liegt?",
+        "Verfolgen Sie echte Immobiliendaten von einer ersten visuellen Regel bis zum Entscheidungsbaum. Prüfen Sie dann, ob der Baum auch für unbekannte Immobilien funktioniert."
+      ],
+      [
+        "Mit der Höhenlage beginnen.",
+        "San Francisco ist hügelig. In diesen Trainingsdaten liegt jede Immobilie oberhalb von <b>73 m</b> in San Francisco.",
+        "Daraus ergibt sich eine erste Regel. Allerdings liegen auch viele Immobilien aus San Francisco darunter. Ein Merkmal trennt die Städte nicht vollständig."
+      ],
+      [
+        "Eine zweite Variable ergänzen.",
+        "Ordnen Sie dieselben Immobilien nun zusätzlich nach ihrem <b>Preis pro Quadratfuß</b> an.",
+        "Einige niedrig gelegene Immobilien in New York sind pro Quadratfuß sehr teuer. Zwei Variablen zeigen ein Muster, das eine allein nicht erkennen ließ."
+      ],
+      [
+        "Aus Mustern werden Regeln.",
+        "Zwei beispielhafte Regeln: oberhalb von <b>73 m</b> San Francisco vorhersagen; darunter New York, wenn der Preis <b>1.776 $ pro ft²</b> übersteigt.",
+        "Diese Grenzen teilen die Grafik in Bereiche. Für die übrigen Immobilien fehlt noch eine Regel. Die Trennwerte sind eine erste Überlegung, noch kein geschätzter Baum."
+      ],
+      [
+        "Alle sieben Variablen betrachten.",
+        "Der Datensatz enthält außerdem Preis, Wohnfläche, Baujahr, Schlafzimmer und Badezimmer. Eine <b>Streudiagrammmatrix</b> vergleicht alle Variablenpaare.",
+        "Ein Entscheidungsbaum sucht über diese Variablen hinweg nach geeigneten Aufteilungen. Dafür verwenden wir ausschließlich Trainingsimmobilien."
+      ],
+      [
+        "Einen Trennwert finden.",
+        "Ein Histogramm zeigt, wie viele Immobilien in jedem Höhenintervall liegen. Die Farben kennzeichnen ihre Städte.",
+        "Verschieben Sie den Trennwert unter der Grafik. Auf der einen Seite lautet die Vorhersage New York, auf der anderen San Francisco."
+      ],
+      [
+        "Jede Aufteilung macht Fehler.",
+        "San Francisco sei die positive Klasse. Wird eine SF-Immobilie als NY vorhergesagt, ist das <b>falsch negativ</b>. Eine NY-Immobilie mit Prognose SF ist <b>falsch positiv</b>.",
+        "Ein anderer Trennwert verändert beide Fehlerzahlen. Bei 73 m gibt es in den Trainingsdaten keine falsch positiven Fälle, aber viele SF-Immobilien werden übersehen."
+      ],
+      [
+        "Die Daten entscheiden lassen.",
+        "Ein Baum bevorzugt Aufteilungen in möglichst einheitliche Gruppen. Hier minimieren wir die nach Gruppengröße gewichtete <b>Entropie</b> (Logarithmus zur Basis 2). Bei null sind beide Gruppen rein. Das entspricht der Maximierung des Informationsgewinns.",
+        "Der beste Trennwert der Höhenlage liegt bei <b>{bestSplit}</b>. Er liefert auch über alle sieben Variablen hinweg die beste erste Aufteilung. Einige Fehler bleiben dennoch."
+      ],
+      [
+        "In jedem Ast wiederholen.",
+        "Nun suchen wir unter den niedriger und höher gelegenen Immobilien getrennt weiter. Jeder Ast kann eine andere Variable und einen anderen Trennwert wählen.",
+        "Diese Wiederholung heißt <b>Rekursion</b>. Eine endgültige Gruppe ist ein Blatt. Seine Vorhersage ist die häufigste Stadt unter den zugehörigen Trainingsimmobilien."
+      ],
+      [
+        "Die Testdaten durchlaufen den Baum.",
+        "Dieser Baum hat eine feste <b>Tiefe von 4</b>. Die <b>{testN} Testimmobilien</b> durchlaufen nun seine Regeln. Keine dieser Beobachtungen wurde zum Schätzen des Baums verwendet.",
+        "Jede Immobilie folgt ihrem eigenen Pfad zu einem Blatt und wird unten nach ihrer vorhergesagten Stadt eingeordnet. Wir vergleichen die Prognose mit der tatsächlichen Stadt und zählen die richtigen Klassifikationen."
+      ],
+      [
+        "Den Baum wachsen lassen.",
+        "Beim Scrollen wächst der Baum von zwei Ebenen bis zu seiner vollen Tiefe. Mehr Ebenen erlauben detailliertere Regeln. Sie können die Tiefe auch unter der Grafik verändern.",
+        "Bei voller Tiefe klassifiziert er <b>{fullTrain}</b> der Trainingsimmobilien richtig. Das zeigt seine Anpassung an bekannte Beobachtungen, aber noch nicht seine Fähigkeit zur Generalisierung."
+      ],
+      [
+        "Eine Immobilie verfolgen.",
+        "Beginnen Sie oben. Beantworten Sie jede Frage anhand der Merkmale der ausgewählten Immobilie. Gehen Sie weiter, bis Sie ein Blatt erreichen.",
+        "Das Blatt liefert die Vorhersage. Wählen Sie eine Trainings- oder Testimmobilie, verfolgen Sie ihren vollständigen Pfad und vergleichen Sie Prognose und tatsächliche Stadt."
+      ],
+      [
+        "Mit unbekannten Immobilien testen.",
+        "Wenden Sie den geschätzten Baum auf die <b>{testN} zurückgehaltenen Immobilien</b> an. Keine davon wurde zur Wahl eines Trennwerts verwendet.",
+        "Bei voller Tiefe beträgt die Trainingsgenauigkeit <b>{fullTrain}</b>, die Testgenauigkeit aber nur <b>{fullTest}</b>. Zusätzliche Details können Besonderheiten der Trainingsstichprobe abbilden: <b>Overfitting</b>."
+      ],
+      [
+        "Was hat der Baum gelernt?",
+        "Ein Entscheidungsbaum übersetzt Merkmale in eine Folge von Fragen. Er wählt Trennwerte anhand von Trainingsdaten und sagt in jedem Blatt eine Stadt vorher.",
+        "Eine perfekte Trainingsgenauigkeit reicht nicht aus. Die Leistung bei unbekannten Immobilien zeigt besser, ob die gelernten Regeln nützlich sind."
+      ]
+    ],
+    "plotFlow": "Tiefe 4 · Testimmobilien. Farbe und Form zeigen die tatsächliche Stadt; unten sind die Immobilien nach der vorhergesagten Stadt gruppiert.",
+    "processed": "Klassifiziert",
+    "wrong": "Falsch",
+    "flowPause": "Pause",
+    "flowResume": "Fortsetzen",
+    "flowReplay": "Erneut abspielen",
+    "flowComplete": "Abgeschlossen",
+    "flowStatus": "Läuft",
+    "flowCorrect": "Richtig"
+  },
+  "es": {
+    "lang": "Idioma",
+    "course": "CIENCIA DE DATOS",
+    "topic": "Una introducción visual a los árboles de decisión",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "restart": "Volver al inicio",
+    "step": "Paso",
+    "of": "de",
+    "scroll": "Desplázate para explorar",
+    "jump": "Ir a una sección",
+    "ny": "Nueva York",
+    "sf": "San Francisco",
+    "home": "Vivienda",
+    "homes": "viviendas",
+    "training": "Datos de entrenamiento",
+    "testing": "Datos de prueba",
+    "trainAccuracy": "Exactitud de entrenamiento",
+    "testAccuracy": "Exactitud de prueba",
+    "accuracy": "Exactitud",
+    "correct": "correctas",
+    "elevation": "Elevación",
+    "price_per_sqft": "Precio / ft²",
+    "price": "Precio",
+    "sqft": "Superficie",
+    "year_built": "Año de construcción",
+    "beds": "Dormitorios",
+    "bath": "Baños",
+    "count": "Número de viviendas",
+    "features": "Siete variables",
+    "split": "Umbral de elevación",
+    "depth": "Profundidad máxima del árbol",
+    "best": "Usar el mejor umbral",
+    "initial": "Usar 73 m",
+    "left": "Hasta el umbral → predecir NY",
+    "right": "Por encima → predecir SF",
+    "fn": "SF predicha como NY",
+    "fp": "NY predicha como SF",
+    "impurity": "Entropía ponderada",
+    "choose": "Elegir una vivienda",
+    "sample": "Datos que clasificar",
+    "nextHome": "Siguiente vivienda",
+    "replay": "Seguir el recorrido",
+    "actual": "Ciudad real",
+    "prediction": "Predicción",
+    "route": "Ruta de decisión",
+    "yes": "Sí",
+    "no": "No",
+    "leaf": "Hoja",
+    "depthAxis": "Profundidad del árbol",
+    "trainLegend": "Entrenamiento",
+    "testLegend": "Prueba",
+    "plotIntro": "Viviendas de entrenamiento agrupadas por su ciudad real.",
+    "plotElevation": "Cada símbolo es una vivienda de entrenamiento. La separación horizontal evita solapamientos.",
+    "plotScatter": "Cada símbolo es una vivienda de entrenamiento.",
+    "plotBoundary": "Las zonas coloreadas muestran las dos reglas ilustrativas. La zona sin color sigue sin resolver.",
+    "plotMatrix": "Relaciones por pares en los datos de entrenamiento. Cada panel incluye todas las viviendas de entrenamiento.",
+    "plotHist": "Frecuencias apiladas en intervalos de elevación de 10 m.",
+    "plotTree": "Cada bifurcación evalúa una variable. Las hojas predicen la ciudad mayoritaria.",
+    "plotPredict": "La ruta resaltada corresponde a la vivienda seleccionada.",
+    "plotTest": "El mismo árbol evaluado a distintas profundidades. Los datos de prueba no determinan las divisiones.",
+    "splitHint": "Mueve el umbral. Aquí, las viviendas más bajas se predicen como NY y las más altas como SF.",
+    "depthHint": "A profundidad 0, todas reciben la predicción mayoritaria. Cada nivel adicional permite otra pregunta.",
+    "testHint": "Estos resultados ilustran la generalización. Si se elige la profundidad con ellos, hará falta otro conjunto de prueba para una evaluación final no sesgada.",
+    "dataTitle": "Datos, método y créditos",
+    "dataText": "El archivo original de R2D3 contiene 492 registros y siete predictores. Se usan 344 registros para entrenar y 148 para probar. La partición es fija (semilla 2026); las filas con predictores idénticos permanecen juntas. La elevación está en metros, los precios en dólares estadounidenses y la superficie en pies cuadrados. Son datos históricos para enseñar, no una muestra representativa del mercado.",
+    "methodText": "El árbol se ajusta localmente mediante divisiones binarias y entropía ponderada por el tamaño de los grupos (logaritmo en base 2), equivalente a maximizar la ganancia de información. Solo los datos de entrenamiento determinan los umbrales; los empates en una hoja predicen Nueva York. La profundidad completa es {fullDepth}. La animación de prueba fija la profundidad en 4. Es un nuevo ajuste al CSV publicado, por lo que difiere de la historia original.",
+    "creditText": "Ejemplo y datos: Stephanie Yee y Tony Chu (R2D3). Inspirado en su introducción visual y el estudio Narrative Flow. Nueva implementación, explicaciones y traducciones. Los datos y esta adaptación se comparten bajo CC BY-NC-SA 4.0.",
+    "download": "Descargar CSV original",
+    "source": "Historia original de R2D3",
+    "dataSource": "Fuente de datos",
+    "reference": "Página de referencia",
+    "license": "CC BY-NC-SA 4.0",
+    "offline": "Todo funciona localmente en este archivo HTML.",
+    "skip": "Ir a la explicación",
+    "noscript": "Activa JavaScript para usar los gráficos interactivos. Las explicaciones siguen siendo legibles.",
+    "steps": [
+      [
+        "Una introducción visual a los árboles de decisión",
+        "<b>¿Nueva York o San Francisco?</b> Una vivienda tiene un precio, una superficie y una elevación. ¿Permiten saber en qué ciudad está?",
+        "Sigue datos reales desde una primera regla visual hasta un árbol de decisión. Comprueba después si funciona con viviendas que nunca ha visto."
+      ],
+      [
+        "Empezar por la elevación.",
+        "San Francisco tiene colinas. En estos datos de entrenamiento, todas las viviendas por encima de <b>73 m</b> están en San Francisco.",
+        "Esto sugiere una regla. Pero muchas viviendas de San Francisco están por debajo de esa altura. Una sola medida no separa perfectamente las ciudades."
+      ],
+      [
+        "Añadir otra variable.",
+        "Sitúa ahora las mismas viviendas también por su <b>precio por pie cuadrado</b>.",
+        "Algunas viviendas de Nueva York situadas a baja elevación son muy caras por pie cuadrado. Dos variables muestran un patrón que una sola no revelaba."
+      ],
+      [
+        "Convertir patrones en reglas.",
+        "Prueba dos reglas ilustrativas: predecir San Francisco por encima de <b>73 m</b>; por debajo, predecir Nueva York si el precio supera <b>1.776 $ por ft²</b>.",
+        "Estos límites dividen el gráfico en regiones. Las viviendas restantes necesitan otra regla. Estos umbrales son una intuición inicial, no un árbol ajustado."
+      ],
+      [
+        "Observar las siete variables.",
+        "El archivo también incluye precio, superficie, año de construcción, dormitorios y baños. Una <b>matriz de dispersión</b> compara todas las parejas.",
+        "Un árbol busca divisiones útiles entre estas variables. Para elegirlas usamos solo las viviendas de entrenamiento."
+      ],
+      [
+        "Encontrar un umbral útil.",
+        "Un histograma muestra cuántas viviendas hay en cada intervalo de elevación. Los colores indican sus ciudades.",
+        "Mueve el umbral bajo el gráfico. A un lado se predice Nueva York; al otro, San Francisco."
+      ],
+      [
+        "Cada división tiene errores.",
+        "Considera San Francisco como clase positiva. Una vivienda SF predicha como NY es un <b>falso negativo</b>. Una vivienda NY predicha como SF es un <b>falso positivo</b>.",
+        "Cambiar el umbral altera ambos errores. El umbral de 73 m evita falsos positivos en el entrenamiento, pero deja muchas viviendas SF sin identificar."
+      ],
+      [
+        "Dejar que decidan los datos.",
+        "El árbol prefiere grupos homogéneos. Aquí minimizamos su <b>entropía</b>, ponderada por el tamaño de cada grupo (logaritmo en base 2). Cero significa que ambos son puros. Equivale a maximizar la ganancia de información.",
+        "El mejor umbral de elevación es <b>{bestSplit}</b>. También es la mejor primera división entre las siete variables. Aun así, quedan errores."
+      ],
+      [
+        "Repetir en cada rama.",
+        "Repite la búsqueda por separado entre las viviendas más bajas y las más altas. Cada rama puede elegir otra variable y otro umbral.",
+        "Esta repetición se llama <b>recursión</b>. Un grupo terminal es una hoja: predice la ciudad mayoritaria entre sus viviendas de entrenamiento."
+      ],
+      [
+        "Las viviendas de prueba recorren el árbol.",
+        "Este árbol tiene una <b>profundidad fija de 4</b>. Las <b>{testN} viviendas de prueba</b> siguen sus reglas. Ninguna se utilizó para ajustar el árbol.",
+        "Cada vivienda sigue su ruta hasta una hoja y después se agrupa abajo según la ciudad predicha. Comparamos la predicción con la ciudad real y contamos las clasificaciones correctas."
+      ],
+      [
+        "Hacer crecer el árbol.",
+        "Al desplazarte, el árbol crece desde dos niveles hasta su profundidad completa. Más niveles permiten reglas más detalladas. También puedes ajustar la profundidad bajo el gráfico.",
+        "A profundidad completa clasifica correctamente el <b>{fullTrain}</b> de las viviendas de entrenamiento. Eso mide el ajuste a datos conocidos, pero no demuestra que generalice bien."
+      ],
+      [
+        "Seguir una vivienda.",
+        "Empieza arriba. Responde a cada pregunta con las medidas de la vivienda seleccionada hasta llegar a una hoja.",
+        "La hoja da la predicción. Elige una vivienda de entrenamiento o de prueba, inspecciona su ruta completa y compara la predicción con la ciudad real."
+      ],
+      [
+        "Probar viviendas nuevas.",
+        "Aplica el árbol a las <b>{testN} viviendas reservadas</b>. Ninguna se utilizó para elegir las divisiones.",
+        "A profundidad completa, la exactitud de entrenamiento es <b>{fullTrain}</b>, pero la de prueba es <b>{fullTest}</b>. Los detalles adicionales pueden ajustarse a peculiaridades de la muestra: <b>sobreajuste</b>."
+      ],
+      [
+        "¿Qué aprendió el árbol?",
+        "Un árbol convierte medidas en una secuencia de preguntas. Elige divisiones con datos de entrenamiento y predice una ciudad en cada hoja.",
+        "La exactitud perfecta en el entrenamiento no basta. El rendimiento con viviendas nuevas indica mejor si las reglas aprendidas son útiles."
+      ]
+    ],
+    "plotFlow": "Profundidad 4 · Viviendas de prueba. El color y la forma indican la ciudad real; los grupos inferiores, la ciudad predicha.",
+    "processed": "Clasificadas",
+    "wrong": "Incorrectas",
+    "flowPause": "Pausar",
+    "flowResume": "Continuar",
+    "flowReplay": "Repetir",
+    "flowComplete": "Completado",
+    "flowStatus": "En curso",
+    "flowCorrect": "Correctas"
+  },
+  "fr": {
+    "lang": "Langue",
+    "course": "SCIENCE DES DONNÉES",
+    "topic": "Une introduction visuelle aux arbres de décision",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "restart": "Revenir au début",
+    "step": "Étape",
+    "of": "sur",
+    "scroll": "Faites défiler pour explorer",
+    "jump": "Choisir une section",
+    "ny": "New York",
+    "sf": "San Francisco",
+    "home": "Logement",
+    "homes": "logements",
+    "training": "Données d’apprentissage",
+    "testing": "Données de test",
+    "trainAccuracy": "Exactitude en apprentissage",
+    "testAccuracy": "Exactitude en test",
+    "accuracy": "Exactitude",
+    "correct": "corrects",
+    "elevation": "Altitude",
+    "price_per_sqft": "Prix / ft²",
+    "price": "Prix",
+    "sqft": "Surface",
+    "year_built": "Année de construction",
+    "beds": "Chambres",
+    "bath": "Salles de bains",
+    "count": "Nombre de logements",
+    "features": "Sept variables",
+    "split": "Seuil d’altitude",
+    "depth": "Profondeur maximale de l’arbre",
+    "best": "Utiliser le meilleur seuil",
+    "initial": "Utiliser 73 m",
+    "left": "Jusqu’au seuil → prédire NY",
+    "right": "Au-dessus → prédire SF",
+    "fn": "SF prédit comme NY",
+    "fp": "NY prédit comme SF",
+    "impurity": "Entropie pondérée",
+    "choose": "Choisir un logement",
+    "sample": "Données à classer",
+    "nextHome": "Logement suivant",
+    "replay": "Suivre le parcours",
+    "actual": "Ville réelle",
+    "prediction": "Prédiction",
+    "route": "Chemin de décision",
+    "yes": "Oui",
+    "no": "Non",
+    "leaf": "Feuille",
+    "depthAxis": "Profondeur de l’arbre",
+    "trainLegend": "Apprentissage",
+    "testLegend": "Test",
+    "plotIntro": "Logements d’apprentissage regroupés par ville réelle.",
+    "plotElevation": "Chaque symbole représente un logement d’apprentissage. L’écart horizontal sépare les symboles superposés.",
+    "plotScatter": "Chaque symbole représente un logement d’apprentissage.",
+    "plotBoundary": "Les zones colorées représentent les deux règles illustratives. La zone non colorée reste indéterminée.",
+    "plotMatrix": "Relations deux à deux dans les données d’apprentissage. Chaque panneau utilise tous les logements d’apprentissage.",
+    "plotHist": "Effectifs empilés par tranches d’altitude de 10 m.",
+    "plotTree": "Chaque bifurcation examine une variable. Les feuilles prédisent la ville majoritaire.",
+    "plotPredict": "Le chemin surligné correspond au logement sélectionné.",
+    "plotTest": "Le même arbre évalué à différentes profondeurs. Les données de test ne déterminent jamais ses divisions.",
+    "splitHint": "Déplacez le seuil. Ici, les logements plus bas sont prédits NY et les plus hauts SF.",
+    "depthHint": "À profondeur 0, tous reçoivent la prédiction majoritaire. Chaque niveau supplémentaire autorise une autre question.",
+    "testHint": "Ces résultats illustrent la généralisation. Choisir la profondeur avec eux nécessiterait un nouveau jeu de test pour une évaluation finale non biaisée.",
+    "dataTitle": "Données, méthode et crédits",
+    "dataText": "Le fichier original R2D3 contient 492 observations et sept variables explicatives. Cette page en utilise 344 pour l’apprentissage et 148 pour le test. La partition est fixe (graine 2026) ; les lignes aux caractéristiques identiques restent ensemble. Altitude en mètres, prix en dollars américains, surfaces en pieds carrés. Ce sont des données pédagogiques historiques, pas un échantillon représentatif du marché.",
+    "methodText": "L’arbre est estimé localement par divisions binaires et entropie pondérée par la taille des groupes (logarithme en base 2), ce qui maximise le gain d’information. Seules les données d’apprentissage déterminent les seuils ; une égalité dans une feuille donne New York. La profondeur complète est {fullDepth}. L’animation de test fixe la profondeur à 4. Ce nouvel ajustement au CSV publié produit des seuils et des scores différents du récit original.",
+    "creditText": "Exemple immobilier et données : Stephanie Yee et Tony Chu (R2D3). Inspiré de leur introduction visuelle et de l’étude Narrative Flow. Nouvelle réalisation, explications et traductions. Données et adaptation partagées sous CC BY-NC-SA 4.0.",
+    "download": "Télécharger le CSV original",
+    "source": "Récit original R2D3",
+    "dataSource": "Source des données",
+    "reference": "Page de référence",
+    "license": "CC BY-NC-SA 4.0",
+    "offline": "Tout fonctionne localement dans ce fichier HTML.",
+    "skip": "Aller à l’explication",
+    "noscript": "Activez JavaScript pour les graphiques interactifs. Les explications restent lisibles.",
+    "steps": [
+      [
+        "Une introduction visuelle aux arbres de décision",
+        "<b>New York ou San Francisco ?</b> Un logement a un prix, une surface et une altitude. Ces mesures permettent-elles de connaître sa ville ?",
+        "Suivez des données réelles, d’une première règle visuelle à un arbre de décision. Vérifiez ensuite si cet arbre fonctionne avec des logements encore inconnus."
+      ],
+      [
+        "Commencer par l’altitude.",
+        "San Francisco est vallonnée. Dans ces données d’apprentissage, tous les logements au-dessus de <b>73 m</b> sont à San Francisco.",
+        "Cela suggère une règle. Mais beaucoup de logements de San Francisco se trouvent plus bas. Une seule mesure ne sépare pas parfaitement les villes."
+      ],
+      [
+        "Ajouter une seconde variable.",
+        "Positionnez aussi les mêmes logements selon leur <b>prix par pied carré</b>.",
+        "Certains logements new-yorkais de faible altitude sont très chers au pied carré. Deux variables révèlent un motif qu’une seule ne montrait pas."
+      ],
+      [
+        "Passer des motifs aux règles.",
+        "Deux règles illustratives : prédire San Francisco au-dessus de <b>73 m</b> ; en dessous, prédire New York si le prix dépasse <b>1 776 $ par ft²</b>.",
+        "Ces limites découpent le graphique en régions. Il manque encore une règle pour les logements restants. Ces seuils sont une intuition, pas un arbre estimé."
+      ],
+      [
+        "Examiner les sept variables.",
+        "Le fichier contient aussi le prix, la surface, l’année de construction, les chambres et les salles de bains. Une <b>matrice de nuages de points</b> compare chaque paire.",
+        "Un arbre recherche des divisions utiles parmi ces variables. Nous les choisissons uniquement à partir des logements d’apprentissage."
+      ],
+      [
+        "Trouver un seuil utile.",
+        "Un histogramme montre le nombre de logements dans chaque tranche d’altitude. Les couleurs indiquent leur ville.",
+        "Déplacez le seuil sous le graphique. D’un côté, la prédiction est New York ; de l’autre, San Francisco."
+      ],
+      [
+        "Toute division fait des erreurs.",
+        "Prenons San Francisco comme classe positive. Un logement SF prédit NY est un <b>faux négatif</b>. Un logement NY prédit SF est un <b>faux positif</b>.",
+        "Changer le seuil modifie les deux nombres d’erreurs. À 73 m, aucun faux positif dans l’apprentissage, mais beaucoup de logements SF sont manqués."
+      ],
+      [
+        "Laisser les données choisir.",
+        "L’arbre privilégie des groupes homogènes. Ici, nous minimisons leur <b>entropie</b> pondérée par leur taille (logarithme en base 2). Zéro signifie que les deux groupes sont purs. Cela revient à maximiser le gain d’information.",
+        "Le meilleur seuil d’altitude est <b>{bestSplit}</b>. C’est aussi la meilleure première division parmi les sept variables. Des erreurs subsistent pourtant."
+      ],
+      [
+        "Recommencer dans chaque branche.",
+        "Recherchez maintenant séparément parmi les logements plus bas et plus hauts. Chaque branche peut choisir une autre variable et un autre seuil.",
+        "Cette répétition s’appelle la <b>récursion</b>. Un groupe terminal est une feuille : elle prédit la ville majoritaire de ses logements d’apprentissage."
+      ],
+      [
+        "Les logements de test traversent l’arbre.",
+        "Cet arbre a une <b>profondeur fixe de 4</b>. Les <b>{testN} logements de test</b> suivent ses règles. Aucun n’a servi à estimer l’arbre.",
+        "Chaque logement suit son chemin jusqu’à une feuille, puis rejoint le groupe de sa ville prédite en bas. Nous comparons la prédiction à la ville réelle et comptons les classifications correctes."
+      ],
+      [
+        "Faire grandir l’arbre.",
+        "En faisant défiler la page, l’arbre passe de deux niveaux à sa profondeur complète. Plus de niveaux permettent des règles plus détaillées. Vous pouvez aussi régler la profondeur sous le graphique.",
+        "À profondeur complète, il classe correctement <b>{fullTrain}</b> des logements d’apprentissage. Cela mesure l’ajustement aux données connues, sans démontrer une bonne généralisation."
+      ],
+      [
+        "Suivre un logement.",
+        "Partez du sommet. Répondez à chaque question avec les caractéristiques du logement sélectionné, jusqu’à une feuille.",
+        "La feuille donne la prédiction. Choisissez un logement d’apprentissage ou de test, inspectez son chemin complet et comparez prédiction et ville réelle."
+      ],
+      [
+        "Tester des logements inconnus.",
+        "Appliquez l’arbre aux <b>{testN} logements réservés</b>. Aucun n’a servi à choisir une division.",
+        "À profondeur complète, l’exactitude en apprentissage atteint <b>{fullTrain}</b>, contre <b>{fullTest}</b> en test. Les détails peuvent épouser les particularités de l’échantillon : le <b>surapprentissage</b>."
+      ],
+      [
+        "Qu’a appris l’arbre ?",
+        "Un arbre transforme des mesures en une suite de questions. Il choisit ses divisions sur les données d’apprentissage et prédit une ville à chaque feuille.",
+        "Un score parfait en apprentissage ne suffit pas. Les résultats sur des logements inconnus renseignent mieux sur l’utilité des règles apprises."
+      ]
+    ],
+    "plotFlow": "Profondeur 4 · Logements de test. La couleur et la forme indiquent la ville réelle ; les groupes du bas indiquent la ville prédite.",
+    "processed": "Classés",
+    "wrong": "Incorrects",
+    "flowPause": "Pause",
+    "flowResume": "Continuer",
+    "flowReplay": "Rejouer",
+    "flowComplete": "Terminé",
+    "flowStatus": "En cours",
+    "flowCorrect": "Corrects"
+  },
+  "uk": {
+    "lang": "Мова",
+    "course": "НАУКА ПРО ДАНІ",
+    "topic": "Наочний вступ до дерев рішень",
+    "previous": "Назад",
+    "next": "Далі",
+    "restart": "Повернутися на початок",
+    "step": "Крок",
+    "of": "із",
+    "scroll": "Гортайте, щоб дослідити",
+    "jump": "Вибрати розділ",
+    "ny": "Нью-Йорк",
+    "sf": "Сан-Франциско",
+    "home": "Помешкання",
+    "homes": "помешкань",
+    "training": "Навчальні дані",
+    "testing": "Тестові дані",
+    "trainAccuracy": "Точність на навчальних даних",
+    "testAccuracy": "Точність на тестових даних",
+    "accuracy": "Точність",
+    "correct": "правильно",
+    "elevation": "Висота",
+    "price_per_sqft": "Ціна / ft²",
+    "price": "Ціна",
+    "sqft": "Площа",
+    "year_built": "Рік побудови",
+    "beds": "Спальні",
+    "bath": "Ванні кімнати",
+    "count": "Кількість помешкань",
+    "features": "Сім змінних",
+    "split": "Поріг висоти",
+    "depth": "Максимальна глибина дерева",
+    "best": "Найкращий поріг",
+    "initial": "Використати 73 м",
+    "left": "До порога включно → прогноз NY",
+    "right": "Вище порога → прогноз SF",
+    "fn": "SF передбачено як NY",
+    "fp": "NY передбачено як SF",
+    "impurity": "Зважена ентропія",
+    "choose": "Вибрати помешкання",
+    "sample": "Дані для класифікації",
+    "nextHome": "Наступне помешкання",
+    "replay": "Простежити шлях",
+    "actual": "Справжнє місто",
+    "prediction": "Прогноз",
+    "route": "Шлях рішення",
+    "yes": "Так",
+    "no": "Ні",
+    "leaf": "Листок",
+    "depthAxis": "Глибина дерева",
+    "trainLegend": "Навчання",
+    "testLegend": "Тест",
+    "plotIntro": "Навчальні помешкання, згруповані за справжнім містом.",
+    "plotElevation": "Кожен символ — навчальне помешкання. Горизонтальні відступи лише розділяють символи, що накладаються.",
+    "plotScatter": "Кожен символ — навчальне помешкання.",
+    "plotBoundary": "Кольорові області показують два ілюстративні правила. Незафарбована область ще не визначена.",
+    "plotMatrix": "Попарні зв’язки в навчальних даних. Кожна панель містить усі навчальні помешкання.",
+    "plotHist": "Складені частоти в інтервалах висоти по 10 м.",
+    "plotTree": "Кожне розгалуження перевіряє одну змінну. Листки передбачають місто більшості.",
+    "plotPredict": "Виділений шлях належить вибраному помешканню.",
+    "plotTest": "Те саме дерево, оцінене за різної глибини. Тестові помешкання не визначають розбиття.",
+    "splitHint": "Змінюйте поріг. Тут нижчі помешкання отримують прогноз NY, а вищі — SF.",
+    "depthHint": "За глибини 0 усі отримують прогноз міста більшості. Кожен додатковий рівень дозволяє ще одне запитання.",
+    "testHint": "Ці результати ілюструють узагальнення. Якщо обирати за ними глибину, для неупередженої підсумкової оцінки потрібна нова тестова вибірка.",
+    "dataTitle": "Дані, метод і джерела",
+    "dataText": "Оригінальний файл R2D3 містить 492 записи та сім ознак. Тут 344 записи використовуються для навчання, а 148 — для тестування. Поділ фіксований (початкове значення 2026); рядки з однаковими ознаками залишаються разом. Висота — у метрах, ціни — у доларах США, площа — у квадратних футах. Це історичні навчальні дані, а не репрезентативна вибірка ринку житла.",
+    "methodText": "Дерево будується локально за бінарними розбиттями зі зваженою за розміром груп ентропією (логарифм за основою 2), що максимізує приріст інформації. Пороги визначають лише навчальні дані; за рівності голосів листок передбачає Нью-Йорк. Повна глибина — {fullDepth}. У тестовій анімації глибина фіксована на 4. Це нова модель на опублікованому CSV, тому пороги й точність відрізняються від оригіналу.",
+    "creditText": "Приклад і дані: Stephanie Yee та Tony Chu (R2D3). Натхнено їхнім наочним вступом і дослідженням Narrative Flow. Нова реалізація, пояснення й переклади. Дані та цю адаптацію поширено за CC BY-NC-SA 4.0.",
+    "download": "Завантажити оригінальний CSV",
+    "source": "Оригінал R2D3",
+    "dataSource": "Джерело даних",
+    "reference": "Сторінка-зразок",
+    "license": "CC BY-NC-SA 4.0",
+    "offline": "Усе працює локально в цьому HTML-файлі.",
+    "skip": "Перейти до пояснення",
+    "noscript": "Увімкніть JavaScript для інтерактивних графіків. Пояснення залишаються доступними.",
+    "steps": [
+      [
+        "Наочний вступ до дерев рішень",
+        "<b>Нью-Йорк чи Сан-Франциско?</b> Помешкання має ціну, площу та висоту розташування. Чи можна за ними визначити місто?",
+        "Простежте шлях реальних даних від першого наочного правила до дерева рішень. Потім перевірте його на помешканнях, яких воно ще не бачило."
+      ],
+      [
+        "Почнімо з висоти.",
+        "Сан-Франциско розташоване на пагорбах. У цих навчальних даних усі помешкання вище <b>73 м</b> — із Сан-Франциско.",
+        "Це підказує правило. Але багато помешкань Сан-Франциско лежать нижче. Одна ознака не розділяє міста повністю."
+      ],
+      [
+        "Додаймо другу змінну.",
+        "Розмістімо ті самі помешкання також за <b>ціною за квадратний фут</b>.",
+        "Деякі низько розташовані помешкання Нью-Йорка дуже дорогі за квадратний фут. Дві змінні виявляють закономірність, якої не показувала одна."
+      ],
+      [
+        "Від закономірностей до правил.",
+        "Два ілюстративні правила: вище <b>73 м</b> передбачати Сан-Франциско; нижче — Нью-Йорк, якщо ціна перевищує <b>1 776 $ за ft²</b>.",
+        "Ці межі ділять графік на області. Для решти помешкань правило ще потрібне. Це початкове припущення, а не навчена модель."
+      ],
+      [
+        "Розгляньмо всі сім змінних.",
+        "Файл також містить ціну, площу, рік побудови, кількість спалень і ванних кімнат. <b>Матриця діаграм розсіювання</b> порівнює кожну пару.",
+        "Дерево шукає корисні розбиття серед цих змінних. Для їх вибору ми використовуємо лише навчальні помешкання."
+      ],
+      [
+        "Знайдімо корисний поріг.",
+        "Гістограма показує кількість помешкань у кожному інтервалі висоти. Кольори позначають міста.",
+        "Пересувайте поріг під графіком. З одного боку прогноз — Нью-Йорк, з іншого — Сан-Франциско."
+      ],
+      [
+        "Кожне розбиття має помилки.",
+        "Нехай Сан-Франциско — позитивний клас. Помешкання SF із прогнозом NY — <b>хибнонегативний</b> випадок. Помешкання NY із прогнозом SF — <b>хибнопозитивний</b>.",
+        "Зміна порога змінює обидві кількості помилок. Поріг 73 м не дає хибнопозитивних випадків у навчальних даних, але пропускає багато SF."
+      ],
+      [
+        "Нехай вирішують дані.",
+        "Дерево віддає перевагу однорідним групам. Тут мінімізуємо їхню <b>ентропію</b>, зважену за розміром груп (логарифм за основою 2). Нуль означає, що обидві групи чисті. Це рівнозначно максимізації приросту інформації.",
+        "Найкращий поріг висоти — <b>{bestSplit}</b>. Це також найкраще перше розбиття серед усіх семи змінних. Проте помилки залишаються."
+      ],
+      [
+        "Повторімо в кожній гілці.",
+        "Тепер шукаймо окремо серед нижчих і вищих помешкань. Кожна гілка може вибрати іншу змінну та інший поріг.",
+        "Це повторення називається <b>рекурсією</b>. Кінцева група — листок; він передбачає найпоширеніше місто серед своїх навчальних помешкань."
+      ],
+      [
+        "Тестові помешкання проходять крізь дерево.",
+        "Це дерево має <b>фіксовану глибину 4</b>. <b>{testN} тестових помешкань</b> проходять за його правилами. Жодне з них не використовували для побудови дерева.",
+        "Кожне помешкання проходить свій шлях до листка, а потім потрапляє до групи передбаченого міста внизу. Порівнюємо прогноз зі справжнім містом і рахуємо правильні класифікації."
+      ],
+      [
+        "Виростімо дерево.",
+        "Під час прокручування дерево зростає від двох рівнів до повної глибини. Більше рівнів дозволяє докладніші правила. Глибину також можна змінити під графіком.",
+        "За повної глибини воно правильно класифікує <b>{fullTrain}</b> навчальних помешкань. Це показує відповідність знайомим даним, але не доводить здатності до узагальнення."
+      ],
+      [
+        "Простежмо одне помешкання.",
+        "Почніть згори. Відповідайте на запитання за ознаками вибраного помешкання, доки не дійдете до листка.",
+        "Листок дає прогноз. Виберіть навчальне або тестове помешкання, перегляньте повний шлях і порівняйте прогноз зі справжнім містом."
+      ],
+      [
+        "Перевірмо на нових помешканнях.",
+        "Застосуйте дерево до <b>{testN} відкладених помешкань</b>. Жодне з них не використовували для вибору розбиттів.",
+        "За повної глибини навчальна точність — <b>{fullTrain}</b>, а тестова — <b>{fullTest}</b>. Зайві деталі можуть відтворювати випадкові особливості навчальної вибірки: це <b>перенавчання</b>."
+      ],
+      [
+        "Чого навчилося дерево?",
+        "Дерево перетворює вимірювання на послідовність запитань. Воно обирає розбиття за навчальними даними й передбачає місто в кожному листку.",
+        "Ідеальної навчальної точності недостатньо. Результати на нових помешканнях краще показують, чи корисні вивчені правила."
+      ]
+    ],
+    "plotFlow": "Глибина 4 · Тестові помешкання. Колір і форма позначають справжнє місто; групи внизу — передбачене місто.",
+    "processed": "Класифіковано",
+    "wrong": "Неправильно",
+    "flowPause": "Пауза",
+    "flowResume": "Продовжити",
+    "flowReplay": "Відтворити знову",
+    "flowComplete": "Завершено",
+    "flowStatus": "Відтворення",
+    "flowCorrect": "Правильно"
+  },
+  "zh": {
+    "lang": "语言",
+    "course": "数据科学",
+    "topic": "决策树的直观入门",
+    "previous": "上一步",
+    "next": "下一步",
+    "restart": "返回开头",
+    "step": "步骤",
+    "of": "/",
+    "scroll": "向下滚动，开始探索",
+    "jump": "选择章节",
+    "ny": "纽约",
+    "sf": "旧金山",
+    "home": "住宅",
+    "homes": "套住宅",
+    "training": "训练数据",
+    "testing": "测试数据",
+    "trainAccuracy": "训练准确率",
+    "testAccuracy": "测试准确率",
+    "accuracy": "准确率",
+    "correct": "正确",
+    "elevation": "海拔",
+    "price_per_sqft": "每平方英尺价格",
+    "price": "总价",
+    "sqft": "面积",
+    "year_built": "建造年份",
+    "beds": "卧室数",
+    "bath": "浴室数",
+    "count": "住宅数量",
+    "features": "七个变量",
+    "split": "海拔划分阈值",
+    "depth": "决策树最大深度",
+    "best": "使用最佳阈值",
+    "initial": "使用 73 米",
+    "left": "不高于阈值 → 预测纽约",
+    "right": "高于阈值 → 预测旧金山",
+    "fn": "旧金山误判为纽约",
+    "fp": "纽约误判为旧金山",
+    "impurity": "加权熵",
+    "choose": "选择一套住宅",
+    "sample": "待分类数据",
+    "nextHome": "下一套住宅",
+    "replay": "查看决策路径",
+    "actual": "实际城市",
+    "prediction": "预测城市",
+    "route": "决策路径",
+    "yes": "是",
+    "no": "否",
+    "leaf": "叶节点",
+    "depthAxis": "树的深度",
+    "trainLegend": "训练",
+    "testLegend": "测试",
+    "plotIntro": "按实际城市分组的训练住宅。",
+    "plotElevation": "每个符号表示一套训练住宅。水平方向的位置仅用于避免符号重叠。",
+    "plotScatter": "每个符号表示一套训练住宅。",
+    "plotBoundary": "着色区域表示两条示例规则。未着色区域仍未确定。",
+    "plotMatrix": "训练数据中变量的两两关系。每个小图都使用全部训练住宅。",
+    "plotHist": "以 10 米为组距的训练住宅海拔堆叠频数。",
+    "plotTree": "每次分支检验一个变量。叶节点预测其中占多数的城市。",
+    "plotPredict": "高亮路径对应所选住宅。",
+    "plotTest": "在不同深度下评估同一棵训练树。测试住宅从不参与阈值的选择。",
+    "splitHint": "移动阈值。这里将较低的住宅预测为纽约，将较高的住宅预测为旧金山。",
+    "depthHint": "深度为 0 时，对所有住宅都预测多数城市。每增加一层，就可以再问一个问题。",
+    "testHint": "这些测试结果用于说明泛化。如果用它们选择树的深度，就需要新的测试集进行无偏的最终评估。",
+    "dataTitle": "数据、方法与来源",
+    "dataText": "R2D3 原始住宅文件包含 492 条记录和七个预测变量。本页面使用 344 条记录训练、148 条记录测试。划分固定（随机种子为 2026），特征完全相同的记录始终放在同一组。海拔单位为米，价格为美元，面积为平方英尺。这些是历史教学数据，不是房地产市场的代表性样本。",
+    "methodText": "本页面在本地使用二叉划分和按组大小加权的熵（以 2 为底的对数）拟合决策树，等价于最大化信息增益。阈值仅根据训练数据选择；叶节点两类数量相同时预测纽约。完整深度为 {fullDepth}。测试动画将深度固定为 4。本页面对公开 CSV 重新拟合，因此阈值和准确率与原故事不同。",
+    "creditText": "住宅示例与数据：Stephanie Yee 和 Tony Chu（R2D3）。灵感来自他们的可视化教程及 Narrative Flow 研究。本页面重新实现，并编写说明与翻译。数据及本改编作品采用 CC BY-NC-SA 4.0 许可。",
+    "download": "下载原始 CSV",
+    "source": "R2D3 原始教程",
+    "dataSource": "数据来源",
+    "reference": "参考页面",
+    "license": "CC BY-NC-SA 4.0",
+    "offline": "所有内容都在此 HTML 文件中本地运行。",
+    "skip": "跳转到说明",
+    "noscript": "请启用 JavaScript 以使用交互图表。下方说明仍可阅读。",
+    "steps": [
+      [
+        "决策树的直观入门",
+        "<b>纽约，还是旧金山？</b>一套住宅有价格、面积和海拔。这些信息能告诉我们它位于哪座城市吗？",
+        "跟随真实住宅数据，从第一条直观规则开始，逐步建立决策树，再检验它能否正确识别从未见过的住宅。"
+      ],
+      [
+        "从海拔开始。",
+        "旧金山地势多丘陵。在这些训练数据中，海拔高于 <b>73 米</b>的住宅全部位于旧金山。",
+        "这提示了一条规则。但许多旧金山住宅也低于这个高度。仅凭一个变量，无法完全区分两座城市。"
+      ],
+      [
+        "加入第二个变量。",
+        "现在将同一批住宅同时按海拔和<b>每平方英尺价格</b>排列。",
+        "一些海拔较低的纽约住宅，每平方英尺价格非常高。两个变量能显示单个变量没有揭示的模式。"
+      ],
+      [
+        "把模式变成规则。",
+        "试用两条示例规则：高于 <b>73 米</b>时预测旧金山；不高于该海拔且价格超过<b>每平方英尺 1,776 美元</b>时预测纽约。",
+        "这些边界将图形分成不同区域。其余住宅仍需要新的规则。这些阈值只是初步直觉，并非已拟合的决策树。"
+      ],
+      [
+        "观察全部七个变量。",
+        "文件还包含总价、面积、建造年份、卧室数和浴室数。<b>散点图矩阵</b>展示每一对变量的关系。",
+        "决策树在这些变量中寻找有效的划分。选择划分时，我们只使用训练住宅。"
+      ],
+      [
+        "寻找有用的阈值。",
+        "直方图显示每个海拔区间中有多少套住宅，颜色表示城市。",
+        "移动图表下方的阈值。一侧住宅被预测为纽约，另一侧被预测为旧金山。"
+      ],
+      [
+        "每次划分都有错误。",
+        "把旧金山视为正类。旧金山住宅被预测为纽约属于<b>假阴性</b>；纽约住宅被预测为旧金山属于<b>假阳性</b>。",
+        "改变阈值会改变两种错误的数量。73 米阈值在训练数据中没有假阳性，但会漏掉许多旧金山住宅。"
+      ],
+      [
+        "让数据选择。",
+        "决策树倾向于将数据分成更纯的组。这里最小化按组大小加权的<b>熵</b>（以 2 为底的对数）；零表示两组都完全纯。这等价于最大化信息增益。",
+        "海拔的最佳训练阈值是 <b>{bestSplit}</b>，也是全部七个变量中最佳的第一次划分。但它仍然会犯错。"
+      ],
+      [
+        "在每个分支中重复。",
+        "分别在较低和较高的住宅中再次寻找划分。每个分支都可以选择不同的变量和阈值。",
+        "这种重复称为<b>递归</b>。最终的组称为叶节点，其预测为该组训练住宅中占多数的城市。"
+      ],
+      [
+        "让测试住宅通过决策树。",
+        "这棵树的<b>深度固定为 4</b>。<b>{testN} 套测试住宅</b>现在按照树的规则分类。它们都未参与模型训练。",
+        "每套住宅沿自己的路径到达叶节点，然后按预测城市归入下方的组。我们将预测与实际城市比较，并累计正确分类的数量。"
+      ],
+      [
+        "让决策树继续生长。",
+        "随着页面滚动，决策树从两层生长到完整深度。更多层次允许更细的规则。你也可以在图表下方调整深度。",
+        "达到完整深度时，树能正确分类 <b>{fullTrain}</b> 的训练住宅。这说明它对已知数据拟合得很好，却不能证明它有良好的泛化能力。"
+      ],
+      [
+        "追踪一套住宅。",
+        "从顶部开始，用所选住宅的特征回答每个问题，直到到达叶节点。",
+        "叶节点给出预测。选择一套训练或测试住宅，查看完整路径，并将预测与实际城市比较。"
+      ],
+      [
+        "检验未见过的住宅。",
+        "将已拟合的树应用于<b>预留的 {testN} 套住宅</b>。它们都未参与划分的选择。",
+        "完整深度下，训练准确率是 <b>{fullTrain}</b>，测试准确率却是 <b>{fullTest}</b>。额外的细节可能只是拟合训练样本的特殊之处，这就是<b>过拟合</b>。"
+      ],
+      [
+        "决策树学到了什么？",
+        "决策树将测量值变成一连串问题。它用训练数据选择划分，并在每个叶节点预测一座城市。",
+        "训练准确率达到百分之百还不够。在未见过的住宅上的表现，更能说明所学规则是否有用。"
+      ]
+    ],
+    "plotFlow": "深度 4 · 测试住宅。颜色和形状表示实际城市；下方分组表示预测城市。",
+    "processed": "已分类",
+    "wrong": "错误",
+    "flowPause": "暂停",
+    "flowResume": "继续",
+    "flowReplay": "重播",
+    "flowComplete": "已完成",
+    "flowStatus": "进行中",
+    "flowCorrect": "正确"
+  }
+};
+
+const $=id=>document.getElementById(id);
+const SCENE={FLOW:9,GROW:10,HOME:11,TEST:12,RECAP:13};
+const rows=parseCSV(RAW_CSV),{train,test}=partition(rows),tree=grow(train),fullDepth=maxDepth(tree);
+const homeLists={train:homeSequence(train),test:homeSequence(test)};
+const nyMax=Math.max(...train.filter(r=>r.in_sf===0).map(r=>r.elevation));
+const bestElevation=bestSplit(train,['elevation']).threshold;
+const flowItems=testFlow(tree,test),flowDuration=Math.max(...flowItems.map(item=>item.finish));
+const flowState={elapsed:0,paused:false,frame:0,last:0,processed:-1};
+let flowGeometry=[];
+const colors=['#00529b','#c8102e'];
+const mobile=()=>window.innerWidth<=780;
+const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initialLang=new URLSearchParams(location.search).get('lang');
+let lang=translations[initialLang]?initialLang:'en',step=0,threshold=73,depth=2,homeSet='test',selectedId=homeLists.test[0].id;
+let positions=new Map(),treePositions=new Map(),scrollFrame=0,resizeFrame=0,routeAnimation=null,navigating=false;
+let nodePositions=new Map(),edgeIds=new Set(),manualThreshold=false,manualDepth=false,manualRoute=false;
+const t=key=>translations[lang][key]??key;
+const num=(v,digits=0)=>new Intl.NumberFormat(lang,{maximumFractionDigits:digits}).format(v);
+const pct=v=>new Intl.NumberFormat(lang,{style:'percent',maximumFractionDigits:1}).format(v);
+const city=r=>t(r.in_sf?'sf':'ny');
+const unit=k=>k==='elevation'?'m':k==='sqft'?'ft²':k==='price_per_sqft'?'$/ft²':k==='price'?'$':'';
+function value(k,v){return k==='year_built'?String(v):`${num(v,1)}${unit(k)?' '+unit(k):''}`;}
+function interpolate(s){return s.replace(/\{(\w+)\}/g,(_,k)=>({bestSplit:value('elevation',bestElevation),fullTrain:pct(accuracy(tree,train)),fullTest:pct(accuracy(tree,test)),testN:num(test.length),fullDepth:num(fullDepth)}[k]??''));}
+function translateStatic(){document.querySelectorAll('[data-t]').forEach(el=>el.textContent=interpolate(t(el.dataset.t)));$('language').value=lang;$('language').setAttribute('aria-label',t('lang'));document.documentElement.lang=lang;document.title=t('topic');$('stage').setAttribute('aria-label',t('topic'));}
+function renderNarrative(){
+  $('narrative').innerHTML=translations[lang].steps.map((s,i)=>`<section class="step" id="step-${i}" data-step="${i}" aria-labelledby="heading-${i}"><div class="eyebrow" aria-hidden="true">${String(i+1).padStart(2,'0')}</div><${i===0?'h1':'h2'} id="heading-${i}">${s[0]}</${i===0?'h1':'h2'}><p>${interpolate(s[1])}</p><p>${interpolate(s[2])}</p>${i===0?`<p class="scroll-cue">${escapeHTML(t('scroll'))}<span aria-hidden="true">↓</span></p>`:''}${i===SCENE.HOME?'<div id="route-text"></div>':''}${i===SCENE.TEST?`<p class="extra">${escapeHTML(t('testHint'))}</p>`:''}</section>`).join('');
+}
+function updateProgress(){
+  const total=document.documentElement.scrollHeight-window.innerHeight;
+  $('progress').style.width=(total>0?Math.max(0,Math.min(1,window.scrollY/total))*100:0)+'%';
+}
+function anchorOffset(){return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header'))+(mobile()?$('stage').getBoundingClientRect().height+20:25);}
+function go(i,instant=false){
+  navigating=true;i=Math.max(0,Math.min(translations[lang].steps.length-1,i));setStep(i);
+  const y=$('step-'+i).getBoundingClientRect().top+window.scrollY-anchorOffset();
+  // Immediate navigation avoids transient scenes changing the sticky panel height
+  // while a long scroll is in progress. Data marks still animate between scenes.
+  window.scrollTo({top:Math.max(0,y),behavior:'instant'});
+  requestAnimationFrame(()=>{navigating=false;});
+}
+function setStep(i){if(step===i&&$('plot').childElementCount>2)return;stopFlow();step=i;
+  manualThreshold=false;manualDepth=false;manualRoute=false;
+  if(i===5||i===6)threshold=73;if(i===7)threshold=bestElevation;
+  if(i===SCENE.GROW)depth=2;if(i===SCENE.HOME||i===SCENE.TEST)depth=fullDepth;
+  $('stage').dataset.scene=String(i);renderControls();draw(true);
+}
+function onScroll(){if(scrollFrame||navigating)return;scrollFrame=requestAnimationFrame(()=>{scrollFrame=0;if(navigating)return;const target=anchorOffset()+(mobile()?45:(window.innerHeight-anchorOffset())*.27);let nearest=0;
+  document.querySelectorAll('.step').forEach((el,i)=>{if(el.getBoundingClientRect().top<=target)nearest=i;});
+  if(nearest!==step)setStep(nearest);
+  const section=$('step-'+step).getBoundingClientRect();
+  const progress=Math.max(0,Math.min(1,(target-section.top)/section.height));
+  scrollDynamics(progress);updateProgress();
+});}
+function scrollDynamics(progress){
+  if(step===6&&!manualThreshold){const next=Math.round(73*(1-Math.min(1,progress/.85))*2)/2;if(next!==threshold){threshold=next;$('threshold').value=threshold;updateStats();draw(false);}}
+  if(step===SCENE.GROW&&!manualDepth){const next=Math.min(fullDepth,2+Math.floor(progress*(fullDepth-1)/.85));if(next!==depth){depth=next;$('depth').value=depth;updateStats();draw(true);}}
+  if(step===SCENE.HOME&&!manualRoute)positionTraveller(Math.min(1,progress/.85));
+}
+function metric(label,content,cls=''){return `<div class="metric ${cls}"><span>${escapeHTML(label)}</span><strong>${content}</strong></div>`;}
+function depthControl(){return `<div class="control-top"><label for="depth">${escapeHTML(t('depth'))}</label><output id="depth-value" for="depth">${depth}</output></div><input id="depth" type="range" min="0" max="${fullDepth}" step="1" value="${depth}"><p class="hint">${escapeHTML(t('depthHint'))}</p>`;}
+function renderControls(){
+  const el=$('controls');el.innerHTML='';
+  if(step>=5&&step<=7){
+    el.innerHTML=`<div class="control-top"><label for="threshold">${escapeHTML(t('split'))}</label><output id="threshold-value" for="threshold"></output></div><input id="threshold" type="range" min="0" max="250" step="0.5" value="${threshold}"><div class="control-actions"><button id="best-split" type="button">${escapeHTML(t('best'))}</button><button id="initial-split" type="button">${escapeHTML(t('initial'))}</button></div><div id="split-stats" aria-live="polite" aria-atomic="true"></div>`;
+    $('threshold').addEventListener('input',e=>{manualThreshold=true;threshold=+e.target.value;updateStats();draw(false);});
+    $('best-split').addEventListener('click',()=>{manualThreshold=true;threshold=bestElevation;$('threshold').value=threshold;updateStats();draw(true);});
+    $('initial-split').addEventListener('click',()=>{manualThreshold=true;threshold=73;$('threshold').value=threshold;updateStats();draw(true);});
+  }else if(step===SCENE.FLOW){
+    el.innerHTML=`<div class="flow-toolbar"><span>${escapeHTML(t('depth'))}: <b>${FLOW_DEPTH}</b></span><div class="control-actions"><button id="flow-pause" type="button"></button><button id="flow-replay" type="button">${escapeHTML(t('flowReplay'))}</button></div></div><div class="metrics flow-metrics">${metric(t('processed'),`<span id="flow-processed">0 / ${num(test.length)}</span>`)}${metric(t('flowCorrect'),'<span id="flow-correct">0</span>')}${metric(t('wrong'),'<span id="flow-wrong">0</span>')}${metric(t('accuracy'),'<span id="flow-accuracy">—</span>')}</div><p id="flow-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>`;
+    $('flow-pause').addEventListener('click',()=>{flowState.paused=!flowState.paused;stopFlow();paintFlow();startFlow();});
+    $('flow-replay').addEventListener('click',()=>{stopFlow();flowState.elapsed=0;flowState.paused=false;flowState.processed=-1;$('flow-announcement').textContent='';paintFlow();startFlow();});
+  }else if(step===SCENE.GROW||step===SCENE.TEST||step===SCENE.RECAP){
+    el.innerHTML=depthControl()+'<div class="metrics" id="accuracy-stats" aria-live="polite" aria-atomic="true"></div>';
+    $('depth').addEventListener('input',e=>{manualDepth=true;depth=+e.target.value;updateStats();draw(true);});
+  }else if(step===SCENE.HOME){
+    el.innerHTML=`<div class="selector-row"><label for="home-set">${escapeHTML(t('sample'))}<select id="home-set"><option value="train">${escapeHTML(t('training'))}</option><option value="test">${escapeHTML(t('testing'))}</option></select></label><label for="home-choice">${escapeHTML(t('choose'))}<select id="home-choice"></select></label></div><div class="control-actions"><button type="button" id="next-home">${escapeHTML(t('nextHome'))}</button><button type="button" id="replay">${escapeHTML(t('replay'))} →</button></div><div id="selected-summary" class="selected-summary" aria-live="polite"></div>`;
+    $('home-set').value=homeSet;updateHomeOptions();
+    $('home-set').addEventListener('change',e=>{homeSet=e.target.value;selectedId=homeLists[homeSet][0].id;updateHomeOptions();updateStats();draw(true);});
+    $('home-choice').addEventListener('change',e=>{selectedId=+e.target.value;updateStats();draw(true);animateRoute();});
+    $('next-home').addEventListener('click',()=>{const a=homeLists[homeSet];selectedId=a[(a.findIndex(r=>r.id===selectedId)+1)%a.length].id;$('home-choice').value=selectedId;updateStats();draw(true);animateRoute();});
+    $('replay').addEventListener('click',animateRoute);
+  }
+  updateStats();
+}
+function updateHomeOptions(){const a=homeLists[homeSet];$('home-choice').innerHTML=a.map(r=>`<option value="${r.id}">${escapeHTML(t('home'))} ${r.id+1} · ${escapeHTML(city(r))}</option>`).join('');$('home-choice').value=selectedId;}
+function updateStats(){
+  if(step>=5&&step<=7){const s=splitStats(train,threshold);$('threshold-value').textContent=value('elevation',threshold);$('threshold').setAttribute('aria-valuetext',value('elevation',threshold));
+    const bar=(a,label)=>`<div><div class="composition-label">${escapeHTML(label)}</div><div class="composition-bar"><span class="ny" style="width:${a.n?100*a.ny/a.n:0}%"></span><span class="sf" style="width:${a.n?100*a.sf/a.n:0}%"></span></div><div class="composition-value">NY ${a.ny} · SF ${a.sf}</div></div>`;
+    $('split-stats').innerHTML=`<div class="metrics">${metric(t('accuracy'),pct(s.accuracy))}${metric(t('fn'),num(s.fn))}${metric(t('fp'),num(s.fp))}${metric(t('impurity'),num(s.entropy,3),'entropy')}</div><div class="composition">${bar(s.left,t('left'))}${bar(s.right,t('right'))}</div>`;
+  }
+  if($('depth-value')){$('depth-value').textContent=depth;$('depth').setAttribute('aria-valuetext',String(depth));$('accuracy-stats').innerHTML=metric(t('trainAccuracy'),pct(accuracy(tree,train,depth)))+metric(t('testAccuracy'),pct(accuracy(tree,test,depth)));}
+  if(step===SCENE.HOME){const row=rows[selectedId],path=route(tree,row,fullDepth),result=path.at(-1).pred;
+    $('selected-summary').innerHTML=`<span>${escapeHTML(t('actual'))}: <b>${escapeHTML(city(row))}</b></span><span>${escapeHTML(t('prediction'))}: <b>${escapeHTML(t(result?'sf':'ny'))}</b></span>`;
+    $('route-text').innerHTML=`<div class="route-title">${escapeHTML(t('home'))} ${row.id+1} · ${escapeHTML(t('route'))}</div><ol class="route-list">${path.slice(0,-1).map(n=>`<li>${escapeHTML(t(n.key))}: ${escapeHTML(value(n.key,row[n.key]))} ${row[n.key]<=n.threshold?'≤':'>'} ${escapeHTML(value(n.key,n.threshold))}</li>`).join('')}<li class="route-leaf">${escapeHTML(t('leaf'))} → ${escapeHTML(t(result?'sf':'ny'))}</li></ol>`;
+  }
+}
+function svgText(x,y,text,cls='',anchor='middle'){return `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${escapeHTML(text)}</text>`;}
+function line(x1,y1,x2,y2,cls='grid'){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"/>`;}
+function mark(row,x,y,size=3.1){const c=colors[row.in_sf];const title=`${t('home')} ${row.id+1} · ${city(row)} · ${t('elevation')}: ${value('elevation',row.elevation)} · ${t('price_per_sqft')}: ${value('price_per_sqft',row.price_per_sqft)}`;
+  return `<g class="home-mark" data-home="${row.id}" transform="translate(${x},${y})" opacity=".74"><title>${escapeHTML(title)}</title>${row.in_sf?`<circle r="${size}" fill="${c}"/>`:`<rect x="${-size}" y="${-size}" width="${size*2}" height="${size*2}" fill="${c}"/>`}</g>`;
+}
+function axes({w,h,xmax,ymax,xlabel,ylabel,xticks,yticks,left=55,bottom=42,top=18,right=16}){
+  const x=v=>left+v/xmax*(w-left-right),y=v=>h-bottom-v/ymax*(h-bottom-top);let html='';
+  yticks.forEach(v=>{html+=line(left,y(v),w-right,y(v));html+=svgText(left-9,y(v)+4,num(v),'','end');});
+  xticks.forEach(v=>{html+=svgText(x(v),h-bottom+19,num(v));});
+  html+=line(left,top,left,h-bottom,'axis')+line(left,h-bottom,w-right,h-bottom,'axis');
+  html+=svgText((left+w-right)/2,h-3,xlabel,'axis-title');
+  html+=`<text class="axis-title" transform="translate(13,${(h-bottom+top)/2}) rotate(-90)" text-anchor="middle">${escapeHTML(ylabel)}</text>`;
+  return {html,x,y,left,right,bottom,top};
+}
+function wrapLabel(text,maxChars){const words=text.includes(' ')?text.split(' '):[...text],out=[];let s='';for(const word of words){if((s+' '+word).length>maxChars&&s){out.push(s);s=word;}else s+=(s&&text.includes(' ')?' ':'')+word;}if(s)out.push(s);return out;}
+function intro(w,h){let html='';const available=w-35,groupWidth=available/2;for(const c of [0,1]){const a=train.filter(r=>r.in_sf===c),cols=Math.ceil(Math.sqrt(a.length*groupWidth/(h-70))),gap=Math.min(17,(groupWidth-25)/cols),r=mobile()?2.5:3.4;
+  const plotW=cols*gap,plotH=Math.ceil(a.length/cols)*gap,x0=17+c*groupWidth+(groupWidth-plotW)/2,y0=(h-plotH)/2;
+  a.forEach((row,i)=>{const x=x0+(i%cols)*gap,y=y0+Math.floor(i/cols)*gap;html+=mark(row,x,y,r);});
+  html+=svgText(17+c*groupWidth+groupWidth/2,h-12,`${t(c?'sf':'ny')} · ${num(a.length)}`,'axis-title');}
+  return html;
+}
+function elevation(w,h){const a=axes({w,h,xmax:1,ymax:250,xlabel:'',ylabel:t('elevation')+' (m)',xticks:[],yticks:[0,50,100,150,200,250],bottom:15});let html=a.html;
+  train.forEach(row=>{const jitter=((row.id*73)%101)/101;const x=a.left+(row.in_sf?.26:.72)*(w-a.left-25)+(jitter-.5)*50;html+=mark(row,x,a.y(row.elevation),mobile()?2.3:3.1);});
+  html+=line(a.left,a.y(nyMax),w-16,a.y(nyMax),'split-line');return html;
+}
+function scatter(w,h,boundary=false){const a=axes({w,h,xmax:5000,ymax:250,xlabel:t('price_per_sqft')+' ($/ft²)',ylabel:t('elevation')+' (m)',xticks:mobile()?[0,2000,4000]:[0,1000,2000,3000,4000,5000],yticks:[0,50,100,150,200,250]});let html='';
+  if(boundary){html+=`<rect x="${a.x(0)}" y="${a.y(250)}" width="${a.x(5000)-a.x(0)}" height="${a.y(73)-a.y(250)}" fill="${colors[1]}" opacity=".08"/><rect x="${a.x(1776)}" y="${a.y(73)}" width="${a.x(5000)-a.x(1776)}" height="${a.y(0)-a.y(73)}" fill="${colors[0]}" opacity=".13"/>`;}
+  html+=a.html;train.forEach(row=>html+=mark(row,a.x(row.price_per_sqft),a.y(row.elevation),mobile()?2:3));
+  if(boundary)html+=line(a.x(0),a.y(73),a.x(5000),a.y(73),'split-line')+line(a.x(1776),a.y(0),a.x(1776),a.y(73),'split-line');return html;
+}
+function matrix(w,h){const keys=FEATURES,cell=Math.min((w-8)/7,(h-8)/7),offsetX=(w-cell*7)/2,offsetY=(h-cell*7)/2;let html='';
+  const short={en:['Height','$/ft²','Price','Area','Year','Beds','Baths'],de:['Höhe','$/ft²','Preis','Fläche','Jahr','Schlafz.','Bäder'],es:['Altitud','$/ft²','Precio','Área','Año','Dorm.','Baños'],fr:['Alt.','$/ft²','Prix','Surf.','Année','Ch.','SdB'],uk:['Висота','$/ft²','Ціна','Площа','Рік','Спальні','Ванні'],zh:['海拔','$/ft²','总价','面积','年份','卧室','浴室']};
+  const bounds=Object.fromEntries(keys.map(k=>[k,[Math.min(...train.map(r=>r[k])),Math.max(...train.map(r=>r[k]))]]));
+  keys.forEach((ky,i)=>keys.forEach((kx,j)=>{if(j<i)return;const x0=offsetX+j*cell,y0=offsetY+i*cell;
+    if(i===j){const label=cell<60?[short[lang][i]]:wrapLabel(t(ky),Math.max(5,Math.floor(cell/6)));label.forEach((s,n)=>html+=svgText(x0+cell/2,y0+cell/2+(n-(label.length-1)/2)*12,s,'node-text'));return;}
+    html+=`<rect x="${x0+3}" y="${y0+3}" width="${cell-6}" height="${cell-6}" fill="#f6f0f1" opacity=".6"/>`;
+    train.forEach(row=>{const xb=bounds[kx],yb=bounds[ky],x=x0+6+(row[kx]-xb[0])/(xb[1]-xb[0])*(cell-12),y=y0+cell-6-(row[ky]-yb[0])/(yb[1]-yb[0])*(cell-12);html+=row.in_sf?`<circle cx="${x}" cy="${y}" r="${mobile()?1:1.35}" fill="${colors[1]}" opacity=".3"/>`:`<rect x="${x-1}" y="${y-1}" width="2" height="2" fill="${colors[0]}" opacity=".35"/>`;});
+  }));return html;
+}
+function histogram(w,h){const bins=Array.from({length:25},()=>[0,0]);train.forEach(row=>bins[Math.min(24,Math.floor(row.elevation/10))][row.in_sf]++);const max=Math.max(...bins.map(b=>b[0]+b[1])),ymax=Math.ceil(max/20)*20;
+  const a=axes({w,h,xmax:250,ymax,xlabel:t('elevation')+' (m)',ylabel:t('count'),xticks:[0,50,100,150,200,250],yticks:[0,ymax/2,ymax]});let html=a.html;
+  bins.forEach((b,i)=>{const x=a.x(i*10)+1,bw=a.x(10)-a.x(0)-2;for(const c of [0,1]){const base=c?b[0]:0,top=base+b[c];html+=`<rect x="${x}" y="${a.y(top)}" width="${bw}" height="${a.y(base)-a.y(top)}" fill="${colors[c]}"><title>${i*10}–${(i+1)*10} m · ${escapeHTML(t(c?'sf':'ny'))}: ${b[c]}</title></rect>`;}});
+  html+=line(a.x(threshold),a.y(0),a.x(threshold),a.y(ymax),'split-line');return html;
+}
+function treeView(w,h,limit,highlight=false){
+  const all=[],links=[];const maxLevel=Math.min(limit,fullDepth);const bottom=mobile()?20:28,top=mobile()?36:45,side=mobile()?18:32;
+  const leaves=n=>!n.left||n.depth>=limit?1:leaves(n.left)+leaves(n.right);
+  const visit=(n,lo,hi)=>{const x=side+(lo+hi)/2*(w-2*side),y=top+(maxLevel?n.depth/maxLevel:0)*(h-top-bottom);const pos={n,x,y};all.push(pos);treePositions.set(n.id,pos);
+    if(n.left&&n.depth<limit){const mid=lo+(hi-lo)*leaves(n.left)/(leaves(n.left)+leaves(n.right));visit(n.left,lo,mid);visit(n.right,mid,hi);links.push([n,n.left],[n,n.right]);}};
+  treePositions=new Map();visit(tree,0,1);
+  const row=rows[selectedId],path=highlight?route(tree,row,limit).map(n=>n.id):[],active=new Set(path);let html='';
+  links.forEach(([a,b])=>{const p=treePositions.get(a.id),q=treePositions.get(b.id);const isActive=active.has(a.id)&&active.has(b.id);html+=`<path data-edge="${b.id}" pathLength="1" d="M${p.x},${p.y} C${p.x},${(p.y+q.y)/2} ${q.x},${(p.y+q.y)/2} ${q.x},${q.y}" fill="none" stroke="${isActive?'#262124':'#d8cdd1'}" stroke-width="${isActive?2.5:1.2}"/>`;});
+  all.forEach(({n,x,y})=>{const terminal=!n.left||n.depth>=limit,r=limit<=2?(mobile()?8:12):limit<=4?(mobile()?4:6):(mobile()?2.3:3.5),activeNode=active.has(n.id);const title=terminal?`${t('leaf')}: ${t(n.pred?'sf':'ny')} · n = ${n.n}`:`${t(n.key)} ≤ ${value(n.key,n.threshold)} · n = ${n.n}`;
+    html+=`<g data-node="${n.id}" data-x="${x}" data-y="${y}"><title>${escapeHTML(title)}</title><circle cx="${x}" cy="${y}" r="${r+(activeNode?2:0)}" fill="${terminal?colors[n.pred]:'#fffdfb'}" stroke="${activeNode?'#262124':terminal?colors[n.pred]:'#b8a9af'}" stroke-width="${activeNode?2:1.4}"/>`;
+    if(limit<=2 || n.depth===0){
+      if(terminal){html+=svgText(x,y+r+17,t(n.pred?'sf':'ny'),'node-text');}
+      else{html+=svgText(x,y-r-17,t(n.key),'node-text')+svgText(x,y-r-3,'≤ '+value(n.key,n.threshold),'node-text');}
+    }
+    if(limit<=2&&!terminal){const l=treePositions.get(n.left.id),rr=treePositions.get(n.right.id);html+=svgText((x+l.x)/2-8,(y+l.y)/2,t('yes'))+svgText((x+rr.x)/2+8,(y+rr.y)/2,t('no'));}
+    html+='</g>';
+  });
+  if(highlight){const p=treePositions.get(path[0]);html+=`<circle id="traveller" cx="0" cy="0" r="5" fill="${colors[row.in_sf]}" stroke="#fffdfb" stroke-width="2" transform="translate(${p.x},${p.y})"/>`;}
+  return html;
+}
+function flowView(w,h){
+  let html=treeView(w,h-85,FLOW_DEPTH);
+  const gap=mobile()?6:8,size=mobile()?2:2.7,side=mobile()?10:18,groupWidth=w/2-side*2;
+  const columns=Math.max(1,Math.floor(groupWidth/gap)),counts=[0,0];
+  for(const prediction of [0,1]){
+    const center=w*(prediction?.75:.25);
+    html+=line(center-groupWidth/2,h-70,center+groupWidth/2,h-70,'axis');
+    html+=svgText(center,h-76,t(prediction?'sf':'ny'),'axis-title');
+  }
+  flowGeometry=flowItems.map(item=>{
+    const index=counts[item.prediction]++,center=w*(item.prediction?.75:.25);
+    const end={x:center-(columns-1)*gap/2+(index%columns)*gap,y:h-57+Math.floor(index/columns)*gap};
+    const points=[treePositions.get('r'),...item.path.map(id=>treePositions.get(id)),end];
+    return {item,points,el:null};
+  });
+  html+='<g class="flow-particles">';
+  for(const {item} of flowGeometry){
+    const title=`${t('home')} ${item.row.id+1} · ${t('actual')}: ${city(item.row)} · ${t('prediction')}: ${t(item.prediction?'sf':'ny')}`;
+    html+=`<g data-flow-home="${item.row.id}" data-flow-prediction="${item.prediction}" data-flow-correct="${item.correct}" visibility="hidden"><title>${escapeHTML(title)}</title>${item.row.in_sf?`<circle r="${size}" fill="${colors[1]}"/>`:`<rect x="${-size}" y="${-size}" width="${size*2}" height="${size*2}" fill="${colors[0]}"/>`}</g>`;
+  }
+  return html+'</g>';
+}
+function bindFlow(){
+  const elements=new Map([...$('plot').querySelectorAll('[data-flow-home]')].map(el=>[Number(el.dataset.flowHome),el]));
+  for(const geometry of flowGeometry)geometry.el=elements.get(geometry.item.row.id);
+  flowState.processed=-1;
+}
+function stopFlow(){cancelAnimationFrame(flowState.frame);flowState.frame=0;flowState.last=0;}
+function paintFlow(){
+  if(step!==SCENE.FLOW||!$('flow-processed'))return;
+  if(reduced())flowState.elapsed=flowDuration;
+  for(const {item,points,el} of flowGeometry){
+    if(!el)continue;
+    const started=flowState.elapsed>=item.start;
+    el.setAttribute('visibility',started?'visible':'hidden');
+    el.dataset.arrived=String(flowState.elapsed>=item.finish);
+    if(started){const p=flowPoint(item,points,flowState.elapsed);el.setAttribute('transform',`translate(${p.x},${p.y})`);}
+  }
+  const totals=flowTotals(flowItems,flowState.elapsed),complete=totals.processed===test.length;
+  if(totals.processed!==flowState.processed){
+    $('flow-processed').textContent=`${num(totals.processed)} / ${num(test.length)}`;
+    $('flow-correct').textContent=num(totals.correct);$('flow-wrong').textContent=num(totals.wrong);
+    $('flow-accuracy').textContent=totals.accuracy===null?'—':pct(totals.accuracy);
+    flowState.processed=totals.processed;
+    if(complete)$('flow-announcement').textContent=`${t('flowComplete')}. ${t('correct')}: ${num(totals.correct)} / ${num(test.length)}. ${t('accuracy')}: ${pct(totals.accuracy)}.`;
+  }
+  $('flow-pause').textContent=t(complete?'flowComplete':flowState.paused?'flowResume':'flowPause');
+  $('flow-pause').disabled=complete;$('flow-pause').setAttribute('aria-pressed',String(flowState.paused));
+  $('stage').dataset.flowState=complete?'complete':flowState.paused?'paused':'running';
+}
+function startFlow(){
+  if(step!==SCENE.FLOW||flowState.paused||flowState.frame||flowState.elapsed>=flowDuration||document.hidden)return;
+  if(reduced()){paintFlow();return;}
+  flowState.last=0;
+  const tick=now=>{
+    flowState.frame=0;
+    if(step!==SCENE.FLOW||flowState.paused||document.hidden){flowState.last=0;return;}
+    if(flowState.last)flowState.elapsed=Math.min(flowDuration,flowState.elapsed+Math.max(0,now-flowState.last));
+    flowState.last=now;paintFlow();
+    if(flowState.elapsed<flowDuration)flowState.frame=requestAnimationFrame(tick);else flowState.last=0;
+  };
+  flowState.frame=requestAnimationFrame(tick);
+}
+function performance(w,h){const a=axes({w,h,xmax:fullDepth,ymax:100,xlabel:t('depthAxis'),ylabel:t('accuracy')+' (%)',xticks:Array.from({length:fullDepth+1},(_,i)=>i).filter(i=>!mobile()||i%2===0||i===fullDepth),yticks:mobile()?[0,50,100]:[0,25,50,75,100]});let html=a.html;html+=line(a.x(depth),a.y(0),a.x(depth),a.y(100),'split-line');
+  for(const [index,data] of [[0,train],[1,test]]){const points=Array.from({length:fullDepth+1},(_,d)=>[a.x(d),a.y(100*accuracy(tree,data,d))]);html+=`<path d="${points.map((p,i)=>(i?'L':'M')+p.join(',')).join(' ')}" fill="none" stroke="${colors[index]}" stroke-width="2.2"${index?' stroke-dasharray="6 4"':''}/>`;
+    points.forEach(([x,y],d)=>{const r=d===depth?5:3;html+=index?`<circle cx="${x}" cy="${y}" r="${r}" fill="${colors[index]}"/>`:`<rect x="${x-r}" y="${y-r}" width="${r*2}" height="${r*2}" fill="${colors[index]}"/>`;});}
+  return html;
+}
+function draw(animate=false){
+  stopFlow();
+  const w=$('plot').parentElement.clientWidth;if(!w)return;
+  let h=mobile()?Math.min(240,window.innerHeight*.29):Math.max(270,Math.min(480,window.innerHeight-360));
+  if(step===4)h=mobile()?Math.min(w,window.innerHeight*.37):Math.min(w,window.innerHeight-230);
+  if(step>=5&&step<=7)h=mobile()?Math.max(140,Math.min(180,window.innerHeight*.22)):Math.max(220,Math.min(360,window.innerHeight-430));
+  if(step===SCENE.FLOW)h=mobile()?240:Math.max(290,Math.min(460,window.innerHeight-360));
+  if(step===SCENE.HOME)h=mobile()?Math.max(170,Math.min(230,window.innerHeight*.26)):Math.max(300,Math.min(480,window.innerHeight-340));
+  const titles=['plotIntro','plotElevation','plotScatter','plotBoundary','plotMatrix','plotHist','plotHist','plotHist','plotTree','plotFlow','plotTree','plotPredict','plotTest','plotTest'];
+  let content='';
+  if(step===0)content=intro(w,h);else if(step===1)content=elevation(w,h);else if(step===2||step===3)content=scatter(w,h,step===3);else if(step===4)content=matrix(w,h);else if(step>=5&&step<=7)content=histogram(w,h);else if(step===8)content=treeView(w,h,2);else if(step===SCENE.FLOW)content=flowView(w,h);else if(step===SCENE.GROW)content=treeView(w,h,depth);else if(step===SCENE.HOME)content=treeView(w,h,fullDepth,true);else content=performance(w,h);
+  if(routeAnimation){routeAnimation.cancel();routeAnimation=null;}
+  $('plot').setAttribute('viewBox',`0 0 ${w} ${h}`);$('plot').style.height=h+'px';
+  $('plot').innerHTML=`<title id="plot-title">${escapeHTML(translations[lang].steps[step][0].replace('<br>',' '))}</title><desc id="plot-desc">${escapeHTML(t(titles[step]))}</desc>${content}`;
+  $('caption').textContent=interpolate(t(titles[step]));$('legend').hidden=step>=SCENE.TEST;$('curve-legend').hidden=step<SCENE.TEST;
+  $('stage').classList.toggle('is-matrix',step===4);
+  const cssTransform=s=>s.replace(/translate\(([^,]+),([^)]+)\)/,(_,x,y)=>`translate(${x}px,${y}px)`);
+  const nextPositions=new Map();$('plot').querySelectorAll('[data-home]').forEach(el=>{const key=el.dataset.home,transform=el.getAttribute('transform');nextPositions.set(key,transform);if(animate&&!reduced()&&positions.has(key)&&positions.get(key)!==transform)el.animate([{transform:cssTransform(positions.get(key))},{transform:cssTransform(transform)}],{duration:650,easing:'cubic-bezier(.22,.61,.36,1)'});});positions=nextPositions;
+  const nextNodes=new Map();$('plot').querySelectorAll('[data-node]').forEach(el=>{const key=el.dataset.node,pos={x:+el.dataset.x,y:+el.dataset.y};nextNodes.set(key,pos);if(animate&&!reduced()&&nodePositions.has(key)){const old=nodePositions.get(key);el.animate([{transform:`translate(${old.x-pos.x}px,${old.y-pos.y}px)`},{transform:'translate(0px,0px)'}],{duration:420,easing:'ease-out'});}});nodePositions=nextNodes;
+  const nextEdges=new Set();$('plot').querySelectorAll('[data-edge]').forEach(el=>{const key=el.dataset.edge;nextEdges.add(key);if(animate&&!reduced()&&!edgeIds.has(key))el.animate([{strokeDasharray:'1',strokeDashoffset:'1'},{strokeDasharray:'1',strokeDashoffset:'0'}],{duration:500,easing:'ease-out'});});edgeIds=nextEdges;
+  if(step===SCENE.FLOW){bindFlow();paintFlow();startFlow();}
+}
+function positionTraveller(progress){
+  const el=$('traveller');if(!el)return;
+  const points=route(tree,rows[selectedId],fullDepth).map(n=>treePositions.get(n.id));
+  const segment=Math.min(points.length-2,Math.floor(progress*(points.length-1))),u=progress>=1?1:progress*(points.length-1)-segment,v=1-u;
+  const p=points[segment],q=points[segment+1],mid=(p.y+q.y)/2;
+  const x=v*v*v*p.x+3*v*v*u*p.x+3*v*u*u*q.x+u*u*u*q.x,y=v*v*v*p.y+3*v*v*u*mid+3*v*u*u*mid+u*u*u*q.y;
+  el.setAttribute('transform',`translate(${x},${y})`);
+}
+function animateRoute(){if(step!==SCENE.HOME)return;const el=$('traveller'),path=route(tree,rows[selectedId],fullDepth),points=path.map(n=>treePositions.get(n.id));if(!el)return;
+  manualRoute=true;
+  if(routeAnimation)routeAnimation.cancel();
+  if(reduced()){const p=points.at(-1);el.setAttribute('transform',`translate(${p.x},${p.y})`);return;}
+  // Use the rendered cubic edges, sampled exactly, so the travelling point stays on its route.
+  const frames=[];
+  for(let i=0;i<points.length-1;i++){const p=points[i],q=points[i+1],mid=(p.y+q.y)/2;for(let j=0;j<=12;j++){const u=j/12,v=1-u,x=v*v*v*p.x+3*v*v*u*p.x+3*v*u*u*q.x+u*u*u*q.x,y=v*v*v*p.y+3*v*v*u*mid+3*v*u*u*mid+u*u*u*q.y;frames.push({transform:`translate(${x}px,${y}px)`});}}
+  routeAnimation=el.animate(frames,{duration:Math.max(1200,(points.length-1)*450),fill:'forwards',easing:'linear'});
+}
+$('language').addEventListener('change',e=>{
+  const keep=step,oldSection=$('step-'+step).getBoundingClientRect();
+  const oldTarget=anchorOffset()+(mobile()?45:(window.innerHeight-anchorOffset())*.27);
+  const fraction=Math.max(0,Math.min(.99,(oldTarget-oldSection.top)/oldSection.height));
+  navigating=true;lang=e.target.value;translateStatic();renderNarrative();renderControls();draw(false);
+  const section=$('step-'+keep).getBoundingClientRect(),target=anchorOffset()+(mobile()?45:(window.innerHeight-anchorOffset())*.27);
+  window.scrollTo({top:Math.max(0,window.scrollY+section.top+fraction*section.height-target),behavior:'instant'});
+  updateProgress();requestAnimationFrame(()=>{navigating=false;});
+});
+$('download').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([RAW_CSV],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='R2D3_NY_SF_Housing.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>draw(false));});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopFlow();else startFlow();});
+translateStatic();renderNarrative();renderControls();draw(false);updateProgress();$('stage').dataset.scene='0';
+if(location.hash.match(/^#step-\d+$/)){const target=Number(location.hash.replace('#step-',''));requestAnimationFrame(()=>go(target,true));}else onScroll();
+
+</script>
+</body>
+</html>

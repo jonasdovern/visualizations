@@ -19,3 +19,16 @@ Projection, boundary simplification, joins, density calculations and visualizati
 ## Three.js
 
 Three.js 0.170.0 is embedded in the map. Copyright © 2010–2024 three.js authors. The complete original MIT licence is included in the HTML and in `docs/licenses/THREE_LICENSE.txt`.
+
+## A Visual Introduction to Decision Trees
+
+The educational adaptation in `docs/decision-trees/`, including its embedded housing dataset and preview, is licensed under **Creative Commons Attribution–NonCommercial–ShareAlike 4.0 International**, not the repository's MIT licence.
+
+Original housing example and dataset: Stephanie Yee and Tony Chu (R2D3).
+
+- Dataset: https://github.com/jadeyee/r2d3-part-1-data
+- Original story: https://r2d3.us/visual-intro-to-machine-learning-part-1/
+- Reference: https://narrative-flow.github.io/exploratory-study-2/
+- Licence: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Changes include a new standalone implementation, six translations, blue/red city colours, entropy-based fitting, a grouped training/test partition, scroll-driven animation, adjustable split/depth controls and distinct shuffled observations in the home selector. Attribution and method details also accompany the page. See `docs/decision-trees/LICENSE.txt`.

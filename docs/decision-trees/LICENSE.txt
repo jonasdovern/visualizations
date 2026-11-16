@@ -1,0 +1,19 @@
+This educational adaptation, including the embedded R2D3 housing dataset, is
+provided under Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+International (CC BY-NC-SA 4.0).
+
+License: https://creativecommons.org/licenses/by-nc-sa/4.0/
+Full legal text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+Original dataset and housing example: Stephanie Yee and Tony Chu (R2D3).
+Dataset: https://github.com/jadeyee/r2d3-part-1-data
+Original story: https://r2d3.us/visual-intro-to-machine-learning-part-1/
+Reference: https://narrative-flow.github.io/exploratory-study-2/
+
+Changes: new standalone implementation, prose, six translations, blue/red color
+palette, grouped training/test partition, newly fitted CART tree, scroll-driven
+animation, threshold/depth controls and selectable individual prediction paths.
+
+Keep attribution, identify changes, use for noncommercial purposes, and share
+adaptations under the same license. The license does not grant trademark rights
+or imply endorsement by R2D3, FAU or WiSo.
