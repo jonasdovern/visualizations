@@ -62,7 +62,7 @@ Separate objects with commas. The order in this array is the gallery order; the 
 1. Prepare a folder such as `my-visualization` on your computer. Put the finished page inside as `index.html`, plus any assets, a preview image, and source/licence information. For a self-contained HTML page, no build is needed.
 2. Open `docs/` in this repository on the `main` branch. Choose **Add file → Upload files**, then drag your whole `my-visualization` folder into the upload area. Check that the uploaded paths are `docs/my-visualization/...`.
 3. Commit the upload to `main`. If using a separate branch, open and merge its pull request into `main`.
-4. Edit `docs/visualizations.js` with the pencil button. Copy an existing catalogue object, insert a comma between entries, and update its title, description, `href` and thumbnail path. Commit this change too. Uploading files makes the direct page available; this catalogue entry adds it to the gallery.
+4. Edit `docs/visualizations.js` with the pencil button. Copy an existing catalogue object, insert a comma between entries, and update its title, description, `href` and thumbnail path. Also increment the `?v=` value on the `visualizations.js` script reference in `docs/index.html` (for example, `?v=20261116-3`) so browsers load the updated catalogue. Commit both changes. Uploading files makes the direct page available; this catalogue entry adds it to the gallery.
 5. Open **Actions** and wait for **pages build and deployment** to succeed for the latest commit.
 6. Open `https://jonasdovern.github.io/visualizations/my-visualization/` and check the gallery link and interactions.
 
