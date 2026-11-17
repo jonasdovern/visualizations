@@ -6,6 +6,7 @@ Interactive maps and figures by Jonas Dovern. This repository holds multiple ind
 
 - Gallery: https://jonasdovern.github.io/visualizations/
 - Election map: https://jonasdovern.github.io/visualizations/bundestagswahl-2025/
+- NRW state election: https://jonasdovern.github.io/visualizations/nrw-landtagswahl-2022/
 - Decision trees: https://jonasdovern.github.io/visualizations/decision-trees/
 
 GitHub Pages publishes from **main → /docs**. Commits to `main` update the website automatically after the Pages deployment completes. No npm installation, framework, custom workflow, or compilation is needed.
@@ -22,6 +23,7 @@ GitHub Pages publishes from **main → /docs**. Commits to `main` update the web
 | `docs/bundestagswahl-2025/sources.html` | Sources, methodology and attribution |
 | `docs/bundestagswahl-2025/constituencies.csv` | Derived constituency data |
 | `docs/bundestagswahl-2025/audit.json` | Provenance, hashes and reconciliation totals |
+| `docs/nrw-landtagswahl-2022/` | NRW 2022 map, preview, data and source notes |
 | `docs/decision-trees/index.html` | Standalone multilingual decision-tree introduction |
 | `docs/decision-trees/preview.jpg` | Gallery thumbnail |
 | `docs/decision-trees/LICENSE.txt` | CC BY-NC-SA 4.0 terms and R2D3 credits |
@@ -80,4 +82,4 @@ Then open http://localhost:8000/. This site has no analytics, external fonts or 
 
 ## Licences
 
-Original gallery and election-visualization code: MIT, see `LICENSE`. The decision-tree adaptation and its embedded R2D3 housing data are **CC BY-NC-SA 4.0**, see `docs/decision-trees/LICENSE.txt`; the root MIT licence does not override those terms. Official election data and geometry: **Datenlizenz Deutschland – Namensnennung 2.0**, with provider credits and transformation notes on the source page. Three.js: its original MIT licence. The repository MIT licence does not replace third-party or data terms. See `NOTICE.md`.
+Original gallery and election-visualization code: MIT, see `LICENSE`. The decision-tree adaptation and its embedded R2D3 housing data are **CC BY-NC-SA 4.0**, see `docs/decision-trees/LICENSE.txt`; the root MIT licence does not override those terms. Bundestag 2025 election data and geometry: **Datenlizenz Deutschland – Namensnennung 2.0**. NRW 2022 results retain the election authority’s source notices; the Stadt Lünen boundary service is **CC BY 4.0**. Provider credits and transformation notes accompany each map. Three.js: its original MIT licence. The repository MIT licence does not replace third-party or data terms. See `NOTICE.md`.

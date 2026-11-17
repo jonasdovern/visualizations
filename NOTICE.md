@@ -32,3 +32,11 @@ Original housing example and dataset: Stephanie Yee and Tony Chu (R2D3).
 - Licence: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 Changes include a new standalone implementation, six translations, blue/red city colours, entropy-based fitting, a grouped training/test partition, scroll-driven animation, adjustable split/depth controls and distinct shuffled observations in the home selector. Attribution and method details also accompany the page. See `docs/decision-trees/LICENSE.txt`.
+
+## Landtagswahl Nordrhein-Westfalen 2022
+
+Results: © Ministerium des Innern des Landes Nordrhein-Westfalen — Landeswahlleiter — / IT.NRW, final results for 15 May 2022. Source: https://www.wahlergebnisse.nrw/landtagswahlen/2022/index.shtml
+
+Boundaries: © Stadt Lünen, CC BY 4.0; © Ministerium des Innern des Landes Nordrhein-Westfalen, IT.NRW, Düsseldorf, Wahlkreiseinteilung des Landes Nordrhein-Westfalen zur Landtagswahl am 15. Mai 2022. Source and CC BY 4.0 metadata: https://geoportal.luenen.de/arcgis/rest/services/Landtagswahl_2022/MapServer/info/iteminfo
+
+Projection, geometry cleaning, simplification, data joins, density calculations and rendering are derived work. Densities use unsimplified source-polygon areas; display footprint changes remain below 0.047%. Full sources and terms accompany the map at `docs/nrw-landtagswahl-2022/sources.html`. The root MIT licence applies to original code and does not replace data or third-party terms.

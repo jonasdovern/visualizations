@@ -24,5 +24,19 @@ window.VISUALIZATIONS = [
       "Interactive tutorial"
     ],
     "source": "Housing data and example · R2D3"
+  },
+  {
+    "title": "Landtagswahl NRW 2022",
+    "subtitle": "North Rhine-Westphalia’s electorate",
+    "description": "Explore final second-vote results in all 128 constituencies. Colour shows the leading party; height shows eligible voters per square kilometre.",
+    "href": "nrw-landtagswahl-2022/",
+    "thumbnail": "nrw-landtagswahl-2022/preview.webp",
+    "thumbnailAlt": "Flat and three-dimensional NRW maps showing second-vote leaders and eligible-voter density",
+    "tags": [
+      "Elections",
+      "North Rhine-Westphalia",
+      "Interactive 3D map"
+    ],
+    "source": "Official data · Landeswahlleiter NRW / IT.NRW · Stadt Lünen"
   }
 ];
